@@ -1,28 +1,30 @@
 {
-  "transaction_number": "2454011045",
-  "reference_no": "2198196679",
-  "status": "completed",
-  "checkout_url": "https://ppi-ph.com/payments/F4US7eXsK-k",
+  "transaction_number": "2426538735",
+  "reference_no": "WD2024122659213",
+  "status": "pending",
   "customer": {
-    "customer_number": "2472254244",
-    "first_name": "raniag",
-    "last_name": "ubas",
-    "email": "blahfool00@gmail.com",
-    "mobile": "+639760101569",
-    "city": "Manabo",
-    "country": "PH",
-    "state": "Cordillera Administrative Region",
-    "zip": "2810",
-    "address_line_1": "Manabo, 2810, Manabo, PHILIPPINES",
-    "address_line_2": null,
-    "full_name": "raniag ubas"
+    "customer_number": "2471373807",
+    "first_name": "yuta",
+    "last_name": "maemura",
+    "email": "i.b.g.m.w.0801@gmail.com",
+    "mobile": "+818017142693",
+    "city": "Shinjuku-Ku",
+    "country": "JP",
+    "state": "Tokyo-To",
+    "zip": "1610033",
+    "address_line_1": "1-3-16-206, Shimochiai",
+    "address_line_2": "1-3-16-206, Shimochiai",
+    "full_name": "yuta maemura"
   },
   "details": {
-    "credit_amount": 600,
-    "credit_currency": "PHP",
-    "fee": 16.5,
-    "method": "payment_provider",
-    "total_amount": 583.5,
-    "type": "deposit"
+    "credit_amount": 27000,
+    "credit_currency": "JPY",
+    "debit_currency": "JPY",
+    "debit_amount": 27000,
+    "exchange_rate": 0,
+    "fee": 1800,
+    "method": "local_bank_transfer",
+    "total_amount": 28800,
+    "type": "withdrawal"
   }
 }

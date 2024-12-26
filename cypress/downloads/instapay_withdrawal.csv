@@ -1,3 +1,0 @@
-﻿"Transaction Date","Transaction Number","Merchant Ref Number","Account Number","Merchant Name","Customer Name","Type","Method","Solution","Status","Amount","MDR Fee","Fixed Fee","Net Amount","Settled At"
-"2024/08/15 22:53:16","2466722491","=""62819373""","AC2313592098","ZOTA TECHNOLOGY PTE LTD","melyza sobrino","withdrawal","payment_provider","instapay","completed","PHP 70.00","PHP 0.14","PHP 15.00","PHP 85.14",""
-"2024/08/15 22:36:28","2414601077","=""62817776""","AC2313592098","ZOTA TECHNOLOGY PTE LTD","melyza sobrino","withdrawal","payment_provider","instapay","failed","PHP 10.00","PHP 0.02","PHP 15.00","PHP 25.02",""
