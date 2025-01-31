@@ -15,14 +15,14 @@ jobs:
       #   with:
       #     node-version: '14'
 
-      # - name: Install dependencies
-      #   run: npm install
+      - name: Install dependencies
+        run: npm install
 
-      # - name: Install Cypress
-      #   run: npm install cypress --save-dev
+      - name: Install Cypress
+        run: npm install cypress --save-dev
 
-      # - name: Verify Cypress installation
-      #   run: npx cypress verify
+      - name: Verify Cypress installation
+        run: npx cypress verify
 
       - name: Run Cypress tests
         run: npx cypress run --spec "cypress/e2e/TransactionChecker/QRPH_Deposit_Transaction.cy.js"
