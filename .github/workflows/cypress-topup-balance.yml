@@ -1,0 +1,36 @@
+name: Topup Balance Checker
+
+on: [push, pull_request]
+
+jobs:
+  Topup_Checker:
+    runs-on: ubuntu-latest
+        
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16' # or your preferred version
+        
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run Cypress tests
+        run: npx cypress run --spec "cypress/e2e/BalanceChecker/Topup_Balance.cy.js"
+        
+      - name: Upload file as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Topup_Balance_Checker # Name of the artifact/file
+          path: |
+            cypress/e2e/Reports/BalanceChecker/Topup_Balance.xlsx
+
+      - name: Upload Cypress screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-topup-screenshots
+          path: cypress/screenshots
