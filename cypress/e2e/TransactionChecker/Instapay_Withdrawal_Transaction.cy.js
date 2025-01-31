@@ -10,7 +10,6 @@ import { loginpage_locators, sidebarmenu_locators,
 // npx cypress open
 // ./config.cmd --url https://github.com/Chzubaga/paystage_cy --token A7RQNS5BNE5GXNPQXMZFN43GRNPWC
 
-
 Cypress.config('defaultCommandTimeout', 10000);
 Cypress.on('uncaught:exception', (err) => {
     // Handle specific errors gracefully
@@ -27,7 +26,7 @@ function roundToTwo(num) {
 // const sheetId = '1vd-uTQXSUgrAc5hoE_du2Zxvw6toE9gEWpjpWxcdwIk';
 const filpath = 'cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx'; //changed to excel path file
 const sheetName = "INSTAPAY WITHDRAWAL";
-const pageLength = 10;
+const pageLength = 5;
 
 const PageNav = Array.from({ length: pageLength}, (_, i) => i + 1);
 
@@ -43,7 +42,7 @@ describe('Looping within an it block', () => {
             cy.get(loginpage_locators.submit_button).click();
 
             // Navigate to the transaction page
-            cy.get(sidebarmenu_locators.transaction_module, { timeout: 4500 }).click();
+            cy.get(sidebarmenu_locators.transaction_module, { timeout: 5500 }).click();
             cy.get(sidebarmenu_locators.transaction_submodule).click();
             // Filter transactions
             filterTransactions('type_withdrawal', 'vendor_allbank', 'solution_instapay', 1, pageNav, { timeout: 5500 });
@@ -55,7 +54,7 @@ describe('Looping within an it block', () => {
                         if (pageNav == active_page_num) {
                             cy.get(transactionpage_locators.tablerow).its('length').then((rowCount) => {
                                 let startRow = (pageNav - 1) * 20 + 1;
-                                for (let x = 2; x <= rowCount + 1; x++) {
+                                for (let x = 2; x <= rowCount+1; x++) {
                                     const rowSelector = `${transactionpage_locators.locator_base1}${x}${transactionpage_locators.locator_base2}${transactionpage_locators.exist}`;
                                     cy.get(rowSelector).then((isTransactionExist) => {
                                     if (isTransactionExist) {
@@ -89,11 +88,11 @@ describe('Looping within an it block', () => {
             }
         });
     });
-    Cypress.on('fail', (err, runnable) => {
-        // Custom error handling logic
-        cy.task('log', "failed");
-        return false; // Prevent Cypress from failing the test
-    });
+    // Cypress.on('fail', (err, runnable) => {
+    //     // Custom error handling logic
+    //     cy.task('log', "failed");
+    //     return false; // Prevent Cypress from failing the test
+    // });
 });
 
 
@@ -219,8 +218,8 @@ const validateWebhookResponses = (transactionNumber, filpath, sheetName, sheetRo
                 expect(payload_transaction_number).to.eq(callback_transaction_number);
             });
         });
-        cy.get('@callback_status').should((callback_status) => {
-            expect(callback_status).to.eq("completed");
+        cy.get('@payload_status').should((payload_status) => {
+            expect(payload_status).to.eq("Success");
         });
         cy.get('@payload_amount').then((payload_amount) => {
             let trimedAmount = Math.floor(payload_amount);

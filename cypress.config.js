@@ -30,6 +30,25 @@ module.exports = defineConfig({
           });
         },
 
+        async parseXLSX({exportFilePath, sheetIndex}) {
+          // Read the xlsx file
+          const workbook = XLSX.readFile(exportFilePath);
+          
+          // Check if the specified sheet exists
+          if (workbook.SheetNames.length <= sheetIndex) {
+            throw new Error(`The sheet at index ${sheetIndex} does not exist in the provided XLSX file.`);
+          }
+
+          // Get the sheet name dynamically based on the provided index
+          const sheetName = workbook.SheetNames[sheetIndex];
+          const sheet = workbook.Sheets[sheetName];
+
+          // Convert the sheet into JSON format
+          const data = XLSX.utils.sheet_to_json(sheet);
+
+          return data; // Return the data to the test
+        },
+
         async deleteFile(filePath) {
           if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
@@ -120,6 +139,7 @@ module.exports = defineConfig({
           return null;
         }
       });
+      //return config;
     },
     downloadsFolder: 'cypress/downloads', // Directory for downloaded files
   },

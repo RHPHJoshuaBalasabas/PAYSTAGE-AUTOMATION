@@ -1,30 +1,29 @@
 {
-  "transaction_number": "2426538735",
-  "reference_no": "WD2024122659213",
-  "status": "pending",
+  "transaction_number": "2596730192",
+  "reference_no": "2430559352",
+  "status": "completed",
+  "message": "Transaction Completed",
+  "checkout_url": "https://ppi-ph.com/payments/fxHmVfosTDo",
   "customer": {
-    "customer_number": "2471373807",
-    "first_name": "yuta",
-    "last_name": "maemura",
-    "email": "i.b.g.m.w.0801@gmail.com",
-    "mobile": "+818017142693",
-    "city": "Shinjuku-Ku",
-    "country": "JP",
-    "state": "Tokyo-To",
-    "zip": "1610033",
-    "address_line_1": "1-3-16-206, Shimochiai",
-    "address_line_2": "1-3-16-206, Shimochiai",
-    "full_name": "yuta maemura"
+    "customer_number": "2475596343",
+    "first_name": "adonis",
+    "last_name": "saludo",
+    "email": "saludoadonis3@gmail.com",
+    "mobile": "+639068526151",
+    "city": "Quezon City",
+    "country": "PH",
+    "state": "Metro Manila",
+    "zip": "1127",
+    "address_line_1": "404 Saint Michael Street Republic Avenue, 1127, Quezon City, PHILIPPINES",
+    "address_line_2": null,
+    "full_name": "adonis saludo"
   },
   "details": {
-    "credit_amount": 27000,
-    "credit_currency": "JPY",
-    "debit_currency": "JPY",
-    "debit_amount": 27000,
-    "exchange_rate": 0,
-    "fee": 1800,
-    "method": "local_bank_transfer",
-    "total_amount": 28800,
-    "type": "withdrawal"
+    "credit_amount": 2000,
+    "credit_currency": "PHP",
+    "fee": 55,
+    "method": "payment_provider",
+    "total_amount": 1945,
+    "type": "deposit"
   }
 }

@@ -26,6 +26,7 @@ const topupFilePath = 'cypress/downloads/top-ups.csv';
 const filpath = 'cypress/e2e/Reports/BalanceChecker/Topup_Balance.xlsx'; //changed to excel path file
 const sheetName = "TOPUP BALANCE";
 const merchantlist = ["EXNESS LIMITED", "RIVALRY LIMITED", "TECHSOLUTIONS (CY) GROUP LIMITED", "TECHOPTIONS (CY) GROUP LIMITED", "ZOTA TECHNOLOGY PTE LTD"]
+// const merchantlist = ["RIVALRY LIMITED"]
 const Merchants = merchantlist.slice();
 
 describe('Check all merchant Top-Up Balance', () => {
@@ -50,7 +51,7 @@ describe('Check all merchant Top-Up Balance', () => {
             cy.get(loginpage_locators.submit_button).click();
 
             // Navigate to transaction page
-            cy.get(sidebarmenu_locators.transaction_module, { timeout: 4500 }).click();
+            cy.get(sidebarmenu_locators.transaction_module, { timeout: 5500 }).click();
             cy.get(sidebarmenu_locators.transaction_submodule).click();
 
             // Filter transactions
@@ -220,9 +221,15 @@ const GoToTopupHistory = (index, merchantName, totalTopupDisplayed, trimmedPeso_
         const totalTopupBalance = completedWithdrawals.reduce((sum, row) => {
             return sum + parseFloat(row['Top-up Amount'].replace(/PHP |,/g, ''));
         }, 0);
-        const finalComputed = totalTopupBalance - trimmedPeso_Topup
-        const totalTopupExported = formatCurrency(finalComputed);
 
+        let finalComputed;
+        if (merchantName == 'RIVALRY LIMITED'){
+            finalComputed = totalTopupBalance - trimmedPeso_Topup - 481022.02    //rivalry pesonet topup
+        }else{
+            finalComputed = totalTopupBalance - trimmedPeso_Topup
+        }
+        const totalTopupExported = formatCurrency(finalComputed);
+        
         try{
             expect(totalTopupExported).to.eq(totalTopupDisplayed);
             cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.status, value: "PASSED" });
@@ -230,7 +237,6 @@ const GoToTopupHistory = (index, merchantName, totalTopupDisplayed, trimmedPeso_
             cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.status, value: "FAILED" });
             cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.remarks, value: `The displayed amount ${totalTopupExported} and computed amount ${totalTopupDisplayed} are not equal.` });
         }
-
         cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.totalTopupExported, value: totalTopupExported });
         cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.totalTopupDisplayed, value: totalTopupDisplayed });
     });

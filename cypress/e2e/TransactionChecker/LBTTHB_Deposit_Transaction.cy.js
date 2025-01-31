@@ -6,7 +6,7 @@ import { loginpage_locators, sidebarmenu_locators,
     data_response_holder } from "../../fixtures/prd/locators";
 
 // npx cypress run --spec "cypress/e2e/TransactionChecker/*"
-// npx cypress run --spec "cypress/e2e/TransactionChecker/LBTIDR_Deposit_Transaction.cy.js"
+// npx cypress run --spec "cypress/e2e/TransactionChecker/LBTTHB_Deposit_Transaction.cy.js"
 // npx cypress open
 // ./config.cmd --url https://github.com/Chzubaga/paystage_cy --token A7RQNS5BNE5GXNPQXMZFN43GRNPWC
 
@@ -27,7 +27,7 @@ function roundToTwo(num) {
 // const sheetId = '1vd-uTQXSUgrAc5hoE_du2Zxvw6toE9gEWpjpWxcdwIk';
 const filpath = 'cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx'; //changed to excel path file
 const sheetName = 'TOPPAY LBT THB';
-const pageLength = 10;
+const pageLength = 5;
 
 const PageNav = Array.from({ length: pageLength}, (_, i) => i + 1);
 

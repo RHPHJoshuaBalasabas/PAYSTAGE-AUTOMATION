@@ -1,2 +1,5 @@
 /node_modules
 /cypress/e2e/Reports
+/.env.dev
+/.env.stg
+/.env.live

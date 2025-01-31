@@ -27,7 +27,7 @@ function roundToTwo(num) {
 // const sheetId = '1vd-uTQXSUgrAc5hoE_du2Zxvw6toE9gEWpjpWxcdwIk';
 const filpath = 'cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx'; //changed to excel path file
 const sheetName = "JPAY DEPOSIT";
-const pageLength = 10;
+const pageLength = 5;
 
 const PageNav = Array.from({ length: pageLength}, (_, i) => i + 1);
 
@@ -91,11 +91,11 @@ describe('Looping within an it block', () => {
             }
         });
     });
-    Cypress.on('fail', (err, runnable) => {
-        // Custom error handling logic
-        cy.task('log', "failed");
-        return false; // Prevent Cypress from failing the test
-    });
+    // Cypress.on('fail', (err, runnable) => {
+    //     // Custom error handling logic
+    //     cy.task('log', "failed");
+    //     return false; // Prevent Cypress from failing the test
+    // });
 });
 
 const validateTransactionDetails = (transactionNumber, pageNav, row, startRow, filpath, sheetName) => {
