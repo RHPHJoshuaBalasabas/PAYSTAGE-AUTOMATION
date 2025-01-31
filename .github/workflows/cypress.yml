@@ -3,7 +3,7 @@ name: QRPH Live Checker
 on: [push, pull_request]
 
 jobs:
-  QRPH-LIVE:
+  Live_Transaction_Checker:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,64 +21,8 @@ jobs:
       - name: Run Cypress tests
         run: npx cypress run --spec "cypress/e2e/TransactionChecker/QRPH_Deposit_Transaction.cy.js"
 
-      - name: Upload file as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Live_Transaction_Checker # Name of the artifact/file
-          path: cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx
-
-      - name: Upload Cypress screenshots
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-transaction-screenshots
-          path: cypress/screenshots
-
-  INSTAPAY-WITHDRAWAL-LIVE:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16' # or your preferred version
-
-      - name: Install dependencies
-        run: npm ci
-
       - name: Run Cypress tests
         run: npx cypress run --spec "cypress/e2e/TransactionChecker/Instapay_Withdrawal_Transaction.cy.js"
-
-      - name: Upload file as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Live_Transaction_Checker # Name of the artifact/file
-          path: cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx
-
-      - name: Upload Cypress screenshots
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-transaction-screenshots
-          path: cypress/screenshots
-
-  JPAY-DEPOSIT-LIVE:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16' # or your preferred version
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Run Cypress tests
         run: npx cypress run --spec "cypress/e2e/TransactionChecker/JPay_Deposit_Transaction.cy.js"
@@ -96,7 +40,7 @@ jobs:
           name: cypress-transaction-screenshots
           path: cypress/screenshots
 
-  TOPUP-BALANCE:
+  Balance_Checker:
     runs-on: ubuntu-latest
         
     steps:
@@ -113,45 +57,16 @@ jobs:
         
       - name: Run Cypress tests
         run: npx cypress run --spec "cypress/e2e/BalanceChecker/Topup_Balance.cy.js"
-        
-      - name: Upload file as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Balance_Checker # Name of the artifact/file
-          path: |
-            cypress/e2e/Reports/BalanceChecker/Topup_Balance.xlsx
 
-      - name: Upload Cypress screenshots
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-balance-screenshots
-          path: cypress/screenshots
-
-
-  SETTLEMENT-BALANCE:
-    runs-on: ubuntu-latest
-        
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16' # or your preferred version
-        
-      - name: Install dependencies
-        run: npm ci
-        
       - name: Run Cypress tests
         run: npx cypress run --spec "cypress/e2e/BalanceChecker/Settlement_Balance.cy.js"
-
+        
       - name: Upload file as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Balance_Checker # Name of the artifact/file
+          name: Live_Transaction_Checker # Name of the artifact/file
           path: |
+            cypress/e2e/Reports/BalanceChecker/Topup_Balance.xlsx
             cypress/e2e/Reports/BalanceChecker/Settlement_Balance.xlsx
 
       - name: Upload Cypress screenshots
@@ -160,5 +75,6 @@ jobs:
         with:
           name: cypress-balance-screenshots
           path: cypress/screenshots
+
 
 
