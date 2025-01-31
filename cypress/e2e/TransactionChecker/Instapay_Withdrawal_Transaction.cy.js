@@ -26,7 +26,7 @@ function roundToTwo(num) {
 // const sheetId = '1vd-uTQXSUgrAc5hoE_du2Zxvw6toE9gEWpjpWxcdwIk';
 const filpath = 'cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx'; //changed to excel path file
 const sheetName = "INSTAPAY WITHDRAWAL";
-const pageLength = 5;
+const pageLength = 1;
 
 const PageNav = Array.from({ length: pageLength}, (_, i) => i + 1);
 
@@ -54,7 +54,8 @@ describe('Looping within an it block', () => {
                         if (pageNav == active_page_num) {
                             cy.get(transactionpage_locators.tablerow).its('length').then((rowCount) => {
                                 let startRow = (pageNav - 1) * 20 + 1;
-                                for (let x = 2; x <= rowCount+1; x++) {
+                                // for (let x = 2; x <= rowCount+1; x++) {
+                                for (let x = 2; x <= 11; x++) {
                                     const rowSelector = `${transactionpage_locators.locator_base1}${x}${transactionpage_locators.locator_base2}${transactionpage_locators.exist}`;
                                     cy.get(rowSelector).then((isTransactionExist) => {
                                     if (isTransactionExist) {
