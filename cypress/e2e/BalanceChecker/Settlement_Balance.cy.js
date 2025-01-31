@@ -95,8 +95,18 @@ describe('Assert Exported File', () => {
                     });
 
                     cy.task('parseXLSX', {exportFilePath: exportFilePath, sheetIndex: '1'}).then((data) => {
-                        // Assuming 'data' contains the rows of the spreadsheet
-                        const approvedTransactions = data.filter(row => row['Settlement Type']?.trim().toLowerCase() === 'approved transaction');
+                        // Create a set to track seen transaction IDs
+                        const seenTransactionIds = new Set();
+
+                        // Filter out duplicates by ensuring each transaction has a unique Transaction ID
+                        const approvedTransactions = data.filter(row => {
+                            const transactionId = row['Transaction Number']; // Adjust with your unique field
+                            if (!transactionId || seenTransactionIds.has(transactionId)) {
+                                return false; // Skip if already seen or no transaction ID
+                            }
+                            seenTransactionIds.add(transactionId);
+                            return row['Settlement Type']?.trim().toLowerCase() === 'approved transaction';
+                        });
 
                         const totalApprovedSettledAmount = approvedTransactions.reduce((sum, row) => {
                             const totalSettledAmount = parseFloat(row['Total Settled Amount'].replace(/PHP |,/g, '')); // Use 'Net Amount'
@@ -114,6 +124,7 @@ describe('Assert Exported File', () => {
                         cy.wrap(totalSettledAmountRegularTransactions).as('totalSettledAmountRegularTransactions');
                         cy.wrap(totalSettlmentAmountRegularTransactions).as('totalSettlmentAmountRegularTransactions');
                     });
+
                     const sheetCells = {
                             accountNumber: `C${currentRow}`,
                             merchantName: `D${currentRow}`,
@@ -127,10 +138,9 @@ describe('Assert Exported File', () => {
                             exportedTransactions: `J${currentRow}`,
                             remarks: `K${currentRow}`,
                         };
-                        // Settlement Details
-                    cy.task('parseXLSX', { exportFilePath: exportFilePath, sheetIndex: '0' }).then((data) => {
-                        
 
+                    // Settlement Details
+                    cy.task('parseXLSX', { exportFilePath: exportFilePath, sheetIndex: '0' }).then((data) => {
                         const settlementRows = data.reduce((acc, row) => {
                             const settlementType = row['Settlement Type']?.trim().toLowerCase();
                             const description = row['Description']?.trim().toLowerCase();
@@ -365,23 +375,34 @@ describe('Assert Exported File', () => {
                         // compute all net amount with status 'completed' and 'pending'
                         cy.task('parseCSV', transactionPath).then((data) => {
                             // Assuming 'data' contains the rows of the spreadsheet
-                            const completedTranscations = data.filter(row => row['Status']?.trim().toLowerCase() === 'completed');
-
-                            const totalCompletedAmountFilter = completedTranscations.reduce((sum, row) => {
-                                const totalAmount = parseFloat(row['Amount'].replace(/PHP |,/g, '')); // Use 'Net Amount'
+                            const completedTransactions = data.filter(row => row['Status']?.trim().toLowerCase() === 'completed');
+                            // Create a Set to track unique transactions (using 'Transaction ID' or another unique property)
+                            const seenTransactions = new Set();
+                            // Filter out duplicates based on a unique property (e.g., 'Transaction ID')
+                            const uniqueCompletedTransactions = completedTransactions.filter(row => {
+                                const transactionId = row['Transaction Number']; // Assuming this column holds unique IDs
+                                if (seenTransactions.has(transactionId)) {
+                                    return false; // Ignore if the transaction ID is already seen
+                                }
+                                seenTransactions.add(transactionId);
+                                return true;
+                            });
+                            // Calculate total amounts after filtering duplicates
+                            const totalCompletedAmountFilter = uniqueCompletedTransactions.reduce((sum, row) => {
+                                const totalAmount = parseFloat(row['Amount'].replace(/PHP |,/g, '')); // Use 'Amount'
                                 return sum + totalAmount;
                             }, 0);
-
-                            const totalCompletedNetAmountFilter = completedTranscations.reduce((sum, row) => {
+                            const totalCompletedNetAmountFilter = uniqueCompletedTransactions.reduce((sum, row) => {
                                 const totalNetAmount = parseFloat(row['Net Amount'].replace(/PHP |,/g, '')); // Use 'Net Amount'
                                 return sum + totalNetAmount;
                             }, 0);
-
+                            // Format the results and store them
                             const totalCompletedAmount = formatCurrency(totalCompletedAmountFilter);
                             const totalCompletedNetAmount = formatCurrency(totalCompletedNetAmountFilter);
                             cy.wrap(totalCompletedAmount).as('TotalCompletedAmount');
                             cy.wrap(totalCompletedNetAmount).as('TotalCompletedNetAmount');
                         });
+                        
                             //TotalCompletedAmount vs ApprovedTransactions
                             cy.get('@ApprovedTransactions').then((ApprovedTransactions) => {
                                 cy.get('@TotalCompletedAmount').then((TotalCompletedAmount) => {
