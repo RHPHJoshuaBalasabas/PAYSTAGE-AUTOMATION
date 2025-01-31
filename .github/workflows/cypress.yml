@@ -26,3 +26,9 @@ jobs:
 
       - name: Run Cypress tests
         run: npx cypress run --spec "cypress/e2e/TransactionChecker/QRPH_Deposit_Transaction.cy.js"
+
+      - name: Upload file as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: transactions
+          path: cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx
