@@ -33,6 +33,13 @@ jobs:
           name: Live_Transaction_Checker # Name of the artifact/file
           path: cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx
 
+      - name: Upload Cypress screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+
   Balance_Checker:
     runs-on: ubuntu-latest
         
@@ -61,6 +68,13 @@ jobs:
           path: |
             cypress/e2e/Reports/BalanceChecker/Topup_Balance.xlsx
             cypress/e2e/Reports/BalanceChecker/Settlement_Balance.xlsx
+
+      - name: Upload Cypress screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
 
 
 
