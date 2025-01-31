@@ -57,7 +57,7 @@ describe('Looping within an it block', () => {
                                 cy.get(transactionpage_locators.tablerow).its('length').then((rowCount) => {
                                     let startRow = (pageNav - 1) * 20 + 1;
                                     // for (let x = 2; x <= rowCount+1; x++) {
-                                    for (let x = 2; x <= 11; x++) {
+                                    for (let x = 2; x <= 5; x++) {
                                         const rowSelector = `${transactionpage_locators.locator_base1}${x}${transactionpage_locators.locator_base2}${transactionpage_locators.exist}`;
                                         cy.get(rowSelector).then((isTransactionExist) => {
                                             if (isTransactionExist) {

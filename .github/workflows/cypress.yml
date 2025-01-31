@@ -37,7 +37,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-screenshots
+          name: cypress-transaction-screenshots
           path: cypress/screenshots
 
   Balance_Checker:
@@ -73,7 +73,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-screenshots
+          name: cypress-balance-screenshots
           path: cypress/screenshots
 
 
