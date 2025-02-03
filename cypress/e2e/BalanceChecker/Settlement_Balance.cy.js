@@ -58,7 +58,7 @@ describe('Assert Exported File', () => {
         cy.get(sidebarmenu_locators.accounts_module, {timeout: 10000}).should('be.visible').click();
         // search the merchant name
         cy.get(accountspage_locators.accounts_search_filter, {timeout: 10000}).type(merchant)
-        cy.wait(1500)
+        cy.wait(3500)
         if (merchant === 'TECHSOLUTIONS (CY) GROUP LIMITED') {
             // click account number
             cy.get('[aria-rowindex="3"] > .rs-table-cell-group > .rs-table-cell-first > .rs-table-cell-content > a', {timeout: 3200}).click()
@@ -338,7 +338,7 @@ describe('Assert Exported File', () => {
                             cy.get(':nth-child(10) > .w-full > .rs-picker-toggle > .rs-stack > [style="flex-grow: 1; overflow: hidden;"] > .rs-picker-toggle-textbox').click().type(dateRange, { timeout: 10000 });
                             //click ok
                             cy.get('.rs-picker-toolbar-right > .rs-btn', {timeout:10000, delay:5000}).click();
-                            // cy.wait(3200);
+                            cy.wait(3200);
                         });
                 
                         // Click the export button
@@ -403,7 +403,7 @@ describe('Assert Exported File', () => {
                             cy.get(sidebarmenu_locators.accounts_module, {timeout: 10000}).should('be.visible').click();
                             // search the merchant name
                             cy.get(accountspage_locators.accounts_search_filter, {timeout: 10000}).type(merchant)
-                            cy.wait(1500)
+                            cy.wait(3500)
                             if (merchant === 'TECHSOLUTIONS (CY) GROUP LIMITED') {
                                 // click account number
                                 cy.get('[aria-rowindex="3"] > .rs-table-cell-group > .rs-table-cell-first > .rs-table-cell-content > a', {timeout: 10000}).click()
