@@ -335,9 +335,9 @@ describe('Assert Exported File', () => {
                             filterTransactions(merchant, 'type_deposit', 'vendor_allbank', 'solution_QRPH', { timeout: 10000 });
 
                             //process date filter
-                            cy.get(':nth-child(10) > .w-full > .rs-picker-toggle > .rs-stack > [style="flex-grow: 1; overflow: hidden;"] > .rs-picker-toggle-textbox').click().type(dateRange, { timeout: 3500 });
+                            cy.get(':nth-child(10) > .w-full > .rs-picker-toggle > .rs-stack > [style="flex-grow: 1; overflow: hidden;"] > .rs-picker-toggle-textbox').click().type(dateRange, { timeout: 10000 });
                             //click ok
-                            cy.get('.rs-picker-toolbar-right > .rs-btn', {timeout:10000}).click();
+                            cy.get('.rs-picker-toolbar-right > .rs-btn', {timeout:10000, delay:5000}).click();
                             // cy.wait(3200);
                         });
                 
