@@ -1,8 +1,8 @@
 import { transactionpage_locators } from "../../fixtures/prd/locators";
 
 export const filterTransactions = (merchantName,transactionType, vendorType, solution) => {
-    cy.get(transactionpage_locators.search_bar).type(merchantName+'{enter}');
-    cy.wait(7300);
+    cy.get(transactionpage_locators.search_bar, {timeout: 10000}).type(merchantName+'{enter}');
+    // cy.wait(7300);
     
     cy.get(transactionpage_locators.type_dropdown)
     .should('be.visible', {timeout: 3500, interval: 1200}).click();
