@@ -13,7 +13,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16' # or your preferred version
+          node-version: '18' # or your preferred version
 
       - name: Install dependencies
         run: npm ci
@@ -27,6 +27,15 @@ jobs:
       - name: Run Cypress tests
         run: npx cypress run --spec "cypress/e2e/TransactionChecker/JPay_Deposit_Transaction.cy.js"
 
+      - name: Run Cypress tests
+        run: npx cypress run --spec "cypress/e2e/TransactionChecker/JPay_Withdrawal_Transaction.cy.js"
+
+      - name: Run Cypress tests
+        run: npx cypress run --spec "cypress/e2e/TransactionChecker/LBTIDR_Deposit_Transaction.cy.js"
+
+      - name: Run Cypress tests
+        run: npx cypress run --spec "cypress/e2e/TransactionChecker/LBTTHB_Deposit_Transaction.cy.js"
+
       - name: Upload file as artifact
         uses: actions/upload-artifact@v4
         with:
@@ -39,5 +48,3 @@ jobs:
         with:
           name: cypress-transaction-screenshots
           path: cypress/screenshots
-
-
