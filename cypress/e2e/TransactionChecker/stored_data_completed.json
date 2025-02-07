@@ -1,28 +1,29 @@
 {
-  "transaction_number": "2467142222",
-  "reference_no": "1191",
+  "transaction_number": "2519796120",
+  "reference_no": "2430488122",
   "status": "completed",
-  "checkout_url": "https://ppi-ph.com/payments/appwQsDLP3s",
+  "message": "Transaction Completed",
+  "checkout_url": "https://ppi-ph.com/payments/ttizi_zRvIQ",
   "customer": {
-    "customer_number": "2481617592",
-    "first_name": "wilhelmina garcia",
-    "last_name": "valdoz",
-    "email": "nslrdc.wiye@gmail.com",
-    "mobile": "+639668214285",
-    "city": "Batangas",
+    "customer_number": "2496503377",
+    "first_name": "carlo",
+    "last_name": "dejardo",
+    "email": "uncledrew886@gmail.com",
+    "mobile": "+639458029616",
+    "city": "CITY OF VALENZUELA",
     "country": "PH",
-    "state": "Batangas",
-    "zip": "4231",
-    "address_line_1": "St simon road balayam",
-    "address_line_2": "St simon road balayam",
-    "full_name": "wilhelmina garcia valdoz"
+    "state": "Select Province",
+    "zip": "1442",
+    "address_line_1": "SITIO KABATUHAN, 1442, CITY OF VALENZUELA, PHILIPPINES",
+    "address_line_2": null,
+    "full_name": "carlo dejardo"
   },
   "details": {
-    "credit_amount": 1000,
+    "credit_amount": 500,
     "credit_currency": "PHP",
-    "fee": 40,
+    "fee": 13.75,
     "method": "payment_provider",
-    "total_amount": 960,
+    "total_amount": 486.25,
     "type": "deposit"
   }
 }

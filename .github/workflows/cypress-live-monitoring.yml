@@ -1,0 +1,50 @@
+name: Live Transaction Monitoring
+
+on: [push, pull_request]
+
+jobs:
+  Live_Transaction_Checker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # or your preferred version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run QRPH Deposit Transaction Checker
+        run: npx cypress run --spec "cypress/e2e/TransactionChecker/QRPH_Deposit_Transaction.cy.js"
+
+      - name: Run Instapay Withdrawal Transaction Checker
+        run: npx cypress run --spec "cypress/e2e/TransactionChecker/Instapay_Withdrawal_Transaction.cy.js"
+
+      - name: Run JPayout Deposit Transaction Checker
+        run: npx cypress run --spec "cypress/e2e/TransactionChecker/JPay_Deposit_Transaction.cy.js"
+
+      - name: Run JPay Withdrawal Transaction Checker
+        run: npx cypress run --spec "cypress/e2e/TransactionChecker/JPay_Withdrawal_Transaction.cy.js"
+
+      - name: Run LBTIDR Deposit Transaction Checker
+        run: npx cypress run --spec "cypress/e2e/TransactionChecker/LBTIDR_Deposit_Transaction.cy.js"
+
+      - name: Run LBTTHB Deposit Transaction Checker
+        run: npx cypress run --spec "cypress/e2e/TransactionChecker/LBTTHB_Deposit_Transaction.cy.js"
+
+      - name: Upload file as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Live_Transaction_Checker # Name of the artifact/file
+          path: cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx
+
+      - name: Upload Cypress screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-transaction-screenshots
+          path: cypress/screenshots

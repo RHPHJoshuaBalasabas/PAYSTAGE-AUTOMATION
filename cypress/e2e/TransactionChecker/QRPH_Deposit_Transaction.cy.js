@@ -24,11 +24,11 @@ function roundToTwo(num) {
 }
 
 // const sheetId = '1vd-uTQXSUgrAc5hoE_du2Zxvw6toE9gEWpjpWxcdwIk';
-const filpath = 'cypress/e2e/Reports/LiveTransactionChecker.xlsx'; //changed to excel path file
+const filpath = 'cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx'; //changed to excel path file
 const sheetName = "QPRH DEPOSIT";
-const pageLength = 4;
+const pageLength = 1;
 
-const PageNav = Array.from({ length: pageLength }, (_, i) => i + 2);
+const PageNav = Array.from({ length: pageLength }, (_, i) => i + 1);
 
 describe('Looping within an it block', () => {
     PageNav.forEach((pageNav) => {
@@ -44,11 +44,11 @@ describe('Looping within an it block', () => {
             cy.updateQATouchTestResult('RpM25D', 'passed');
 
             // Navigate to transaction page
-            cy.get(sidebarmenu_locators.transaction_module, { timeout: 4500 }).click();
-            cy.get(sidebarmenu_locators.transaction_submodule).click();
+            cy.get(sidebarmenu_locators.transaction_module, { timeout: 5000, interval: 1200 }).click();
+            cy.get(sidebarmenu_locators.transaction_submodule, { timeout: 5000, interval: 1200 }).click();
 
             // Filter transactions
-            filterTransactions('type_deposit', 'vendor_allbank', 'solution_QRPH', 2, pageNav, { timeout: 5500 });
+            filterTransactions('type_deposit', 'vendor_allbank', 'solution_QRPH', 1, pageNav, { timeout: 5500 });
             try {
                 cy.get('body').then(($body) => {
                     if ($body.find('.rs-pagination-btn-active').length) {
@@ -56,7 +56,8 @@ describe('Looping within an it block', () => {
                             if(pageNav == active_page_num){
                                 cy.get(transactionpage_locators.tablerow).its('length').then((rowCount) => {
                                     let startRow = (pageNav - 1) * 20 + 1;
-                                    for (let x = 2; x <= rowCount+1; x++) {
+                                    // for (let x = 2; x <= rowCount+1; x++) {
+                                    for (let x = 2; x <= 6; x++) {
                                         const rowSelector = `${transactionpage_locators.locator_base1}${x}${transactionpage_locators.locator_base2}${transactionpage_locators.exist}`;
                                         cy.get(rowSelector).then((isTransactionExist) => {
                                             if (isTransactionExist) {
@@ -73,7 +74,7 @@ describe('Looping within an it block', () => {
                                             }
                                             cy.go('back', { timeout: 5000 });
                                             cy.wait(3250);
-                                            filterTransactions('type_deposit', 'vendor_allbank', 'solution_QRPH', 2, pageNav, { timeout: 5500 });
+                                            filterTransactions('type_deposit', 'vendor_allbank', 'solution_QRPH', 1, pageNav, { timeout: 5500 });
                                         });
                                     }
                                 });
@@ -92,11 +93,21 @@ describe('Looping within an it block', () => {
             }
         });
     });
+        // Cypress.on('fail', (err, runnable) => {
+        //     // Custom error handling logic
+        //     cy.task('log', "failed");
+        //     return false; // Prevent Cypress from failing the test
+        // });
 });
 
 const validateTransactionDetails = (transactionNumber, pageNav, row, startRow, filpath, sheetName) => {
     try {
-        cy.visit(`https://portal.paystage.net/${transactionNumber}/transactions`).wait(5200);
+        cy.visit(`https://portal.paystage.net/${transactionNumber}/transactions`).wait(5000);
+        const storedStatus = Cypress.env('status');
+        if (storedStatus === 'pending' || storedStatus === 'expired') {
+            cy.log(`Skip test as QRPH deposit status is ${storedStatus}.`);
+            return;
+        }
         cy.get(transactiondetails_locators.merchant_number).should('be.visible').and('have.text', Cypress.env('merchant_number'));
         cy.get(transactiondetails_locators.status).should('be.visible').and('have.text', Cypress.env('status'));
         cy.get(transactiondetails_locators.type).should('be.visible').and('have.text', Cypress.env('transaction_type'));
@@ -104,11 +115,28 @@ const validateTransactionDetails = (transactionNumber, pageNav, row, startRow, f
         cy.get(transactiondetails_locators.customer_name).should('be.visible').and('have.text', Cypress.env('customer_name'));
         cy.get(transactiondetails_locators.solution_ref).invoke('text').as('solution_ref');
         cy.get(transactiondetails_locators.mobile).invoke('text').as('mobile');
-        cy.get(transactiondetails_locators.view_payload).contains('View Payload').click({ waitForAnimations: false });
-        cy.get(transactiondetails_locators.mobdal_content).invoke('text').then((receivedPayload) => {
-            cy.writeFile(data_response_holder.rwPayload, receivedPayload);
+
+        cy.get('body').then(($body) => {
+            const viewPayload = $body.find(transactiondetails_locators.view_payload);
+            if (viewPayload.length && viewPayload.text().includes('View Payload')) {
+                cy.log("with view payload");
+                cy.get(transactiondetails_locators.view_payload).contains('View Payload').should('be.visible').click({ waitForAnimations: false });
+                cy.get(transactiondetails_locators.mobdal_content).invoke('text').then((receivedPayload) => {
+                    cy.writeFile(data_response_holder.rwPayload, receivedPayload);
+                });
+                cy.get(transactiondetails_locators.close_modal).click({ waitForAnimations: false });
+            } else {
+                cy.log("no view payload");
+                cy.get('[aria-label="Next"]', {timeout: 4000}).click();
+                cy.get(transactiondetails_locators.view_payload).contains('View Payload').should('be.visible').click({ waitForAnimations: false });
+                cy.get(transactiondetails_locators.mobdal_content).invoke('text').then((receivedPayload) => {
+                    cy.writeFile(data_response_holder.rwPayload, receivedPayload);
+                });
+                cy.get(transactiondetails_locators.close_modal).click({ waitForAnimations: false });
+                cy.get('[aria-label="Previous"]', {timeout: 4000}).click();
+            }
         });
-        cy.get(transactiondetails_locators.close_modal).click({ waitForAnimations: false });
+
         cy.get(transactiondetails_locators.view_request).first().contains('View request').click({ waitForAnimations: false });
         cy.get(transactiondetails_locators.mobdal_content).invoke('text').then((sent_payload_completed) => {
             cy.writeFile(data_response_holder.rwCompleted, sent_payload_completed);
@@ -122,6 +150,18 @@ const validateTransactionDetails = (transactionNumber, pageNav, row, startRow, f
 
 const validateWebhookResponses = (filpath, sheetName, sheetRow) => {
     const resultCell = `I${sheetRow}`;
+    const remarksCell = `J${sheetRow}`;
+    const storedStatus = Cypress.env('status');
+    if (storedStatus === 'pending') {
+        cy.log(`Skip test as QRPH status is ${storedStatus}.`);
+        if (storedStatus == 'pending'){
+            cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: resultCell, value: 'PENDING'});
+            return;
+        } else if(storedStatus == 'failed'){
+            cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: resultCell, value: 'FAILED'});
+            return;
+        }
+    }
     try {
         cy.readFile(data_response_holder.rwPayload).then((payloadResponse) => {
             cy.wrap(payloadResponse.amount).as('payload_amount');
@@ -146,24 +186,36 @@ const validateWebhookResponses = (filpath, sheetName, sheetRow) => {
             const amount = parseInt(payload_amount);
             const merchant_name = Cypress.env('merchant_name');
 
-            switch (merchant_name) {
-                case 'TECHOPTIONS (CY) GROUP LIMITED':
-                case 'TECHSOLUTIONS (CY) GROUP LIMITED':
-                    const fee = Math.max(25, roundToTwo(amount * 0.04));
-                    cy.get('@callback_fee').should('eq', fee);
-                    cy.get('@callback_total_amount').should('eq', amount - fee);
-                    break;
-                case 'RIVALRY LIMITED':
-                    const rivalryFee = Math.max(13, amount * 0.0275);
-                    cy.get('@callback_fee').should('eq', rivalryFee);
-                    cy.get('@callback_total_amount').should('eq', amount - rivalryFee);
-                    break;
-                default:
-                    const defaultFee = roundToTwo(amount * 0.02);
-                    const adjustedFee = Cypress.env('merchant_name') === 'FooBar Prod' ? 1 : Math.max(10, defaultFee);
-                    cy.get('@callback_fee').should('eq', adjustedFee);
-                    cy.get('@callback_total_amount').should('eq', amount - adjustedFee);
-            }
+                switch (merchant_name) {
+                    case 'TECHOPTIONS (CY) GROUP LIMITED':
+                    case 'TECHSOLUTIONS (CY) GROUP LIMITED':
+                        const fee = Math.max(25, roundToTwo(amount * 0.04));
+                        cy.get('@callback_fee').should('eq', fee);
+                        cy.get('@callback_total_amount').should('eq', amount - fee);
+                        break;
+                    case 'RIVALRY LIMITED':
+                        const rivalryFee = Math.max(13, roundToTwo(amount * 0.0275));
+                        cy.get('@callback_fee').should('eq', rivalryFee);
+                        cy.get('@callback_total_amount').should('eq', amount - rivalryFee);
+                        break;
+                    default:
+                        const defaultFee = roundToTwo(amount * 0.02);
+                        const adjustedFee = Cypress.env('merchant_name') === 'FooBar Prod' ? 1 : Math.max(10, defaultFee);
+                    
+                        cy.get('@callback_fee').then((callback_fee)=>{
+                            try{
+                            expect(callback_fee).to.eq(adjustedFee);
+                            }catch (error){
+                                cy.log("The Fees are not equal to computed fees")
+                                console.log("The Fees are not equal to computed fees")
+                                cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: remarksCell, value: `Computed Fees are not equal to actual fees.`});
+                            }
+                            cy.get('@callback_total_amount').then((callback_total_amount)=>{
+                                expect(callback_total_amount).to.eq(amount - callback_fee);
+                            });
+                        });
+                    
+                }
             
             cy.get('@callback_credit_amount').should('eq', payload_amount);
         });

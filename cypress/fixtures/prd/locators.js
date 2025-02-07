@@ -120,20 +120,23 @@ const transactionpage_locators ={
     tablerow: '[class="rs-table-row"]',
     locator_base1: '[aria-rowindex="',
     locator_base2: '"] > .rs-table-cell-group > ',
-    exist: "[aria-colindex='2'] > .rs-table-cell-content > a",
+    exist: "[aria-colindex='3'] > .rs-table-cell-content > a",
 
     // specific transaction row details
-    transaction_number: '[aria-colindex="2"] > .rs-table-cell-content > a',
-    merchant_number: '[aria-colindex="3"] > .rs-table-cell-content',
-    merchant_name: '[aria-colindex="5"] > .rs-table-cell-content',
+    transaction_number: '[aria-colindex="3"] > .rs-table-cell-content > a',
+    merchant_number: '[aria-colindex="4"] > .rs-table-cell-content',
+    merchant_name: '[aria-colindex="6"] > .rs-table-cell-content',
     customer_name: '.lowercase > .rs-table-cell-content > span',
-    type: '[aria-colindex="7"] > .rs-table-cell-content',
-    method: '[aria-colindex="8"] > .rs-table-cell-content > span',
-    vendor: '[aria-colindex="9"] > .rs-table-cell-content',
-    solution: '[aria-colindex="10"] > .rs-table-cell-content',
-    status: '[aria-colindex="11"] > .rs-table-cell-content > span',
-    amount: '[aria-colindex="12"] > .rs-table-cell-content',
-    net_amount: '[aria-colindex="15"] > .rs-table-cell-content',
+    type: '[aria-colindex="8"] > .rs-table-cell-content',
+    method: '[aria-colindex="9"] > .rs-table-cell-content > span',
+    vendor: '[aria-colindex="10"] > .rs-table-cell-content',
+    solution: '[aria-colindex="11"] > .rs-table-cell-content',
+    status: '[aria-colindex="12"] > .rs-table-cell-content > span',
+    amount: '[aria-colindex="13"] > .rs-table-cell-content',
+    net_amount: '[aria-colindex="16"] > .rs-table-cell-content',
+
+    // search bar
+    search_bar: '.rs-input-group > .rs-input',
 
     // filter date
     date_dropdown: ':nth-child(8) > .w-full > .rs-picker-toggle > .rs-stack > [style="flex-grow: 1; overflow: hidden;"] > .rs-picker-toggle-textbox',
@@ -208,7 +211,21 @@ const data_response_holder ={
     rwCompleted: 'cypress/e2e/TransactionChecker/stored_data_completed.json',
 }
 
+const settlement_locators ={
+    solution_menu: '.p-4',
+    locator_base1: '[aria-rowindex="',
+    locator_base2: '"] > .rs-table-cell-group > ',
+    
+    settlement_transaction_num: '.lowercase > .rs-table-cell-content > a',
+    settlement_checkbox: '.rs-table-cell-first > .rs-table-cell-content > .flex > .rs-checkbox > .rs-checkbox-checker > label > .rs-checkbox-wrapper',
+    settlement_recordtime: '[aria-colindex="2"] > .rs-table-cell-content > .flex > span',
+    settlement_cutoff: '[aria-colindex="3"] > .rs-table-cell-content',
+    settlement_accountnumber: '[aria-colindex="5"] > .rs-table-cell-content',
+    settlement_accountname: '[aria-colindex="6"] > .rs-table-cell-content',
+    settlement_transaction_num: '[aria-colindex="7"] > .rs-table-cell-content',
+    settlement_status: '[aria-colindex="17"] > .rs-table-cell-content'
+}
+
 module.exports = {loginpage_locators, dashboardpage_locators, merchantspage_locators,
                     accountspage_locators, accountdetails_locators, sidebarmenu_locators, transactionpage_locators,
-                    transactiondetails_locators, customers_locators, data_response_holder}
-// module.exports = {dashboardpage_locators}
+                    transactiondetails_locators, customers_locators, data_response_holder, settlement_locators}

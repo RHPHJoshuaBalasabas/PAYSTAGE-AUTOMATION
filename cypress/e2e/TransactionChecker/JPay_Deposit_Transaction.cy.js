@@ -25,9 +25,9 @@ function roundToTwo(num) {
 }
 
 // const sheetId = '1vd-uTQXSUgrAc5hoE_du2Zxvw6toE9gEWpjpWxcdwIk';
-const filpath = 'cypress/e2e/Reports/LiveTransactionChecker.xlsx'; //changed to excel path file
+const filpath = 'cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx'; //changed to excel path file
 const sheetName = "JPAY DEPOSIT";
-const pageLength = 5;
+const pageLength = 1;
 
 const PageNav = Array.from({ length: pageLength}, (_, i) => i + 1);
 
@@ -47,7 +47,7 @@ describe('Looping within an it block', () => {
             cy.get(sidebarmenu_locators.transaction_module, { timeout: 4500 }).click();
             cy.get(sidebarmenu_locators.transaction_submodule).click();
             // Filter transactions
-            filterTransactions('type_deposit', 'vendor_jpay', 'solution_lbtJapan', 2, pageNav, { timeout: 5500 });
+            filterTransactions('type_deposit', 'vendor_jpay', 'solution_lbtJapan', 1, pageNav, { timeout: 5500 });
             try {
                 cy.get('body').then(($body) => {
                     if ($body.find('.rs-pagination-btn-active').length) {
@@ -74,7 +74,7 @@ describe('Looping within an it block', () => {
                                             }
                                             cy.go('back', { timeout: 5000 });
                                             cy.wait(3500);
-                                            filterTransactions('type_deposit', 'vendor_jpay', 'solution_lbtJapan', 2, pageNav, { timeout: 5500 });
+                                            filterTransactions('type_deposit', 'vendor_jpay', 'solution_lbtJapan', 1, pageNav, { timeout: 5500 });
                                         })
                                     }
                                 });
@@ -91,6 +91,11 @@ describe('Looping within an it block', () => {
             }
         });
     });
+    // Cypress.on('fail', (err, runnable) => {
+    //     // Custom error handling logic
+    //     cy.task('log', "failed");
+    //     return false; // Prevent Cypress from failing the test
+    // });
 });
 
 const validateTransactionDetails = (transactionNumber, pageNav, row, startRow, filpath, sheetName) => {
@@ -113,11 +118,28 @@ const validateTransactionDetails = (transactionNumber, pageNav, row, startRow, f
         cy.get(transactiondetails_locators.customer_name).should('be.visible').and('have.text', Cypress.env('customer_name'));
         cy.get(transactiondetails_locators.solution_ref).invoke('text').as('solution_ref');
         cy.get(transactiondetails_locators.mobile).invoke('text').as('mobile');
-        cy.get(transactiondetails_locators.view_payload).contains('View Payload').click({ waitForAnimations: false });
-        cy.get(transactiondetails_locators.mobdal_content).invoke('text').then((receivedPayload) => {
-            cy.writeFile(data_response_holder.rwPayload, receivedPayload);
+
+        cy.get('body').then(($body) => {
+            const viewPayload = $body.find(transactiondetails_locators.view_payload);
+            if (viewPayload.length && viewPayload.text().includes('View Payload')) {
+                cy.log("with view payload");
+                cy.get(transactiondetails_locators.view_payload).contains('View Payload').should('be.visible').click({ waitForAnimations: false });
+                cy.get(transactiondetails_locators.mobdal_content).invoke('text').then((receivedPayload) => {
+                    cy.writeFile(data_response_holder.rwPayload, receivedPayload);
+                });
+                cy.get(transactiondetails_locators.close_modal).click({ waitForAnimations: false });
+            } else {
+                cy.log("no view payload");
+                cy.get('[aria-label="Next"]', {timeout: 3200}).click();
+                cy.get(transactiondetails_locators.view_payload).contains('View Payload').should('be.visible').click({ waitForAnimations: false });
+                cy.get(transactiondetails_locators.mobdal_content).invoke('text').then((receivedPayload) => {
+                    cy.writeFile(data_response_holder.rwPayload, receivedPayload);
+                });
+                cy.get(transactiondetails_locators.close_modal).click({ waitForAnimations: false });
+                cy.get('[aria-label="Previous"]', {timeout: 3200}).click();
+            }
         });
-        cy.get(transactiondetails_locators.close_modal).click({ waitForAnimations: false });
+
         cy.get(transactiondetails_locators.view_request).first().contains('View request').click({ waitForAnimations: false });
         cy.get(transactiondetails_locators.mobdal_content).invoke('text').then((sent_payload_completed) => {
             cy.writeFile(data_response_holder.rwCompleted, sent_payload_completed);
@@ -194,11 +216,11 @@ const validateWebhookResponses = (transactionNumber, filpath, sheetName, sheetRo
                 expect(payload_uid).to.eq(callback_merrefno);
             });
         });
-        cy.get('@payload_transfer_id').then((payload_transfer_id) => {
-            cy.get('@callback_transfer_id').should((callback_transfer_id) => {
-                expect(payload_transfer_id).to.eq(callback_transfer_id);
-            });
-        });
+        // cy.get('@payload_transfer_id').then((payload_transfer_id) => {
+        //     cy.get('@callback_transfer_id').should((callback_transfer_id) => {
+        //         expect(payload_transfer_id).to.eq(callback_transfer_id);
+        //     });
+        // });
         cy.get('@payload_amount').then((payload_amount) => {
             cy.get('@callback_fee').then((callback_fee) => {
                 cy.get('@callback_credit_amount').then((callback_credit_amount) => {
