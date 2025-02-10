@@ -127,6 +127,7 @@ const transactionpage_locators ={
     merchant_number: '[aria-colindex="4"] > .rs-table-cell-content',
     merchant_name: '[aria-colindex="6"] > .rs-table-cell-content',
     customer_name: '.lowercase > .rs-table-cell-content > span',
+    
     type: '[aria-colindex="8"] > .rs-table-cell-content',
     method: '[aria-colindex="9"] > .rs-table-cell-content > span',
     vendor: '[aria-colindex="10"] > .rs-table-cell-content',
