@@ -43,7 +43,7 @@ const Merchants = merchantlist.slice();
 describe('Assert Exported File', () => {
     let currentRow = 2;
     Merchants.forEach((merchant) => {
-    it(`Settlement balance: ${merchant}`, () => {
+    it.only(`Settlement balance: ${merchant}`, () => {
         cy.task('deleteFile', transactionFilePath).then((message) => {
             cy.log(message);
         });
@@ -429,6 +429,16 @@ describe('Assert Exported File', () => {
                 });
         }); //end of it
     });//end of each merchant loop
+
+    it('sample req',()=>{
+        cy.request({
+            method: 'POST',
+            url: 'http://localhost:5000/notify',
+            body: {
+                "message":"please roses red"
+            }
+        })
+    })
 });//end of describe
 
 
