@@ -225,9 +225,16 @@ describe('Assert Exported File', () => {
                     });
 
                     //ComputedTotalSettledAmount vs TotalSettledAmount
+                    // cy.get('@ComputedTotalSettledAmount').then((ComputedTotalSettledAmount) => {
+                    //     cy.get('@TotalSettledAmount').then((TotalSettledAmount) => {
+                    //         expect(ComputedTotalSettledAmount).to.equal(TotalSettledAmount);
+                    //     });
+                    // });
+
                     cy.get('@ComputedTotalSettledAmount').then((ComputedTotalSettledAmount) => {
                         cy.get('@TotalSettledAmount').then((TotalSettledAmount) => {
-                            expect(ComputedTotalSettledAmount).to.equal(TotalSettledAmount);
+                            // Wrap the values to ensure proper chaining and comparison
+                            cy.wrap(ComputedTotalSettledAmount).should('equal', TotalSettledAmount);
                         });
                     });
                     
@@ -246,7 +253,7 @@ describe('Assert Exported File', () => {
                         cy.get(':nth-child(10) > .w-full > .rs-picker-toggle > .rs-stack > [style="flex-grow: 1; overflow: hidden;"] > .rs-picker-toggle-textbox').click().type(dateRange, { timeout: 10000 });
                         //click ok
                         cy.get('.rs-picker-toolbar-right > .rs-btn', {timeout:10000, delay:5000}).click();
-                    });
+                    });                    
 
                     // Click the export button
                     cy.get('.space-x-3 > .rs-btn > div', { timeout: 10000, interval: 1200 }).click();
@@ -337,15 +344,14 @@ const GetDateRange = (index, recordTime, cutoff) => {
 
         // Split the string by spaces and then by slashes
         const record_dateParts = recordtime.split(' ')[0].split('/');
-        
+
         // Extract the numbers
         const record_year = record_dateParts[0]; // 24
         const record_month = record_dateParts[1]; // 07
         const record_day = record_dateParts[2]; // 28
 
         const settlement_record_date = '20' + record_year + '/' + record_month + '/' + record_day;
-    
-        // Chain another cy.get() for the cutoff element
+
         return cutoff.invoke('text').then((settlement_cutoff) => {
             let settlement_cutoff_date;
 
@@ -373,7 +379,7 @@ const GetDateRange = (index, recordTime, cutoff) => {
             cy.log(`The settlement cut-off date: ` + settlement_cutoff_date);
 
             const dateRange = settlement_record_date + ' ~ ' + settlement_cutoff_date;
-            
+
             //settlement date
             cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.settlementDate, value: settlement_record_date });
             //settlement cutoff
@@ -384,6 +390,7 @@ const GetDateRange = (index, recordTime, cutoff) => {
         });
     });
 };
+
 
 function processSettlementData(exportFilePath, sheetIndex) {
     return cy.task('parseXLSX', { exportFilePath: exportFilePath, sheetIndex: sheetIndex }).then((data) => {
