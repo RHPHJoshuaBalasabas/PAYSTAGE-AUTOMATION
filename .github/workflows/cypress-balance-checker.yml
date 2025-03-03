@@ -29,7 +29,7 @@ jobs:
             cypress/e2e/Reports/BalanceChecker/Settlement_Balance.xlsx
 
       - name: Upload Cypress screenshots
-        if: failure()
+        if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         with:
           name: cypress-settlement-screenshots
@@ -63,7 +63,7 @@ jobs:
             cypress/e2e/Reports/BalanceChecker/Topup_Balance.xlsx
 
       - name: Upload Cypress screenshots
-        if: failure()
+        if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         with:
           name: cypress-topup-screenshots

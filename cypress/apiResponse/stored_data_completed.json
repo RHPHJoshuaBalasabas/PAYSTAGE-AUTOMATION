@@ -1,0 +1,29 @@
+{
+  "transaction_number": "2572699245",
+  "reference_no": "sZV8dkeQ",
+  "status": "expired",
+  "message": "Transaction expired",
+  "checkout_url": "https://openapi.qrpay.work/cashier/?orderNum=PRE1896391408315551816",
+  "customer": {
+    "customer_number": "2554144349",
+    "first_name": "jane",
+    "last_name": "doe",
+    "email": "sample@gmail.com",
+    "mobile": "+639123448247",
+    "city": "Makati",
+    "country": "PH",
+    "state": "Manila",
+    "zip": "1238",
+    "address_line_1": "Cornelia Street",
+    "address_line_2": "Limasawa",
+    "full_name": "jane doe"
+  },
+  "details": {
+    "credit_amount": 60,
+    "credit_currency": "THB",
+    "fee": 2,
+    "method": "local_bank_transfer",
+    "total_amount": 58,
+    "type": "deposit"
+  }
+}
