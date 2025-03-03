@@ -1,54 +1,54 @@
 class TransactionPageTest {
+    getTransactionBody() {
+        return cy.get('body', {timeout:10000});
+    }
+
+
+
     getTransactionTableRow() {
-        return cy.get('[class="rs-table-row"]');
+        return cy.get('[class="rs-table-row"]', {timeout:10000});
     }
-    getTransactionLocatorBase1() {
-        return cy.get('[aria-rowindex="');
-    }
-    getTransactionLocatorBase2() {
-        return cy.get('"] > .rs-table-cell-group > ');
-    }
-    getTransactionExist() {
-        return cy.get("[aria-colindex='3'] > .rs-table-cell-content > a");
+    getTransactionExistChecker(x) {
+        return cy.get(`[aria-rowindex="${x}"] > .rs-table-cell-group`);
     }
 
-    getTransactionTransactionNumber() {
-        return cy.get('[aria-colindex="3"] > .rs-table-cell-content > a');
+    getTransactionTransactionNumber(x) {
+        return this.getTransactionExistChecker(x).find('[aria-colindex="3"] > .rs-table-cell-content > a');
     }
-    getTransactionMerchantNumber() {
-        return cy.get('[aria-colindex="4"] > .rs-table-cell-content');
+    getTransactionMerchantNumber(x) {
+        return this.getTransactionExistChecker(x).find('[aria-colindex="4"] > .rs-table-cell-content');
     }
-    getTransactionMerchantName() {
-        return cy.get('[aria-colindex="6"] > .rs-table-cell-content');
+    getTransactionMerchantName(x) {
+        return this.getTransactionExistChecker(x).find('[aria-colindex="6"] > .rs-table-cell-content');
     }
-    getTransactionCustomerName() {
-        return cy.get('.lowercase > .rs-table-cell-content > span');
+    getTransactionCustomerName(x) {
+        return this.getTransactionExistChecker(x).find('.lowercase > .rs-table-cell-content > span');
     }
 
-    getTransactionType() {
-        return cy.get('[aria-colindex="8"] > .rs-table-cell-content');
+    getTransactionType(x) {
+        return this.getTransactionExistChecker(x).find('[aria-colindex="8"] > .rs-table-cell-content');
     }
-    getTransactionMethod() {
-        return cy.get('[aria-colindex="9"] > .rs-table-cell-content > span');
+    getTransactionMethod(x) {
+        return this.getTransactionExistChecker(x).find('[aria-colindex="9"] > .rs-table-cell-content > span');
     }
-    getTransactionVendor() {
-        return cy.get('[aria-colindex="10"] > .rs-table-cell-content');
+    getTransactionVendor(x) {
+        return this.getTransactionExistChecker(x).find('[aria-colindex="10"] > .rs-table-cell-content');
     }
-    getTransactionSolution() {
-        return cy.get('[aria-colindex="11"] > .rs-table-cell-content');
+    getTransactionSolution(x) {
+        return this.getTransactionExistChecker(x).find('[aria-colindex="11"] > .rs-table-cell-content');
     }
-    getTransactionStatus() {
-        return cy.get('[aria-colindex="12"] > .rs-table-cell-content > span');
+    getTransactionStatus(x) {
+        return this.getTransactionExistChecker(x).find('[aria-colindex="12"] > .rs-table-cell-content > span');
     }
-    getTransactionAmount() {
-        return cy.get('[aria-colindex="13"] > .rs-table-cell-content');
+    getTransactionAmount(x) {
+        return this.getTransactionExistChecker(x).find('[aria-colindex="13"] > .rs-table-cell-content');
     }
-    getTransactionNetAmount() {
-        return cy.get('[aria-colindex="16"] > .rs-table-cell-content');
+    getTransactionNetAmount(x) {
+        return this.getTransactionExistChecker(x).find('[aria-colindex="16"] > .rs-table-cell-content');
     }
 
     getTransactionSearchBar() {
-        return cy.get('.rs-input-group > .rs-input');
+        return cy.get('.rs-input-group > .rs-input', {timeout: 10000});
     }
     
     getTransactionDropdownDate() {
@@ -57,18 +57,21 @@ class TransactionPageTest {
     getTransactionDateFilter1(x) {
         return cy.get(`.rs-picker-toolbar-ranges > :nth-child(${x}) > .rs-btn`);
     }
-    // getTransactionDateFilter2() {
-    //     return cy.get(") > .rs-btn");
-    // }
+    getTransactionProcessDateFilter() {
+        return cy.get(':nth-child(10) > .w-full > .rs-picker-toggle > .rs-stack > [style="flex-grow: 1; overflow: hidden;"] > .rs-picker-toggle-textbox');
+    }
+    getTransactionProcessDateOk() {
+        return cy.get('.rs-picker-toolbar-right > .rs-btn', {timeout:10000, delay:5000})
+    }
 
     getTransactionDropdownType() {
         return cy.get(":nth-child(2) > .w-full > .rs-picker-toggle");
     }
     getTransactionTypeWithdrawal() {
-        return cy.get('[data-key="withdrawal"] > .rs-picker-select-menu-item');
+        return cy.get('[data-key="withdrawal"] > .rs-picker-select-menu-item', {timeout: 10000});
     }
     getTransactionTypeDeposit() {
-        return cy.get('[data-key="deposit"] > .rs-picker-select-menu-item');
+        return cy.get('[data-key="deposit"] > .rs-picker-select-menu-item', {timeout: 10000});
     }
     
     getTransactionDropdownVendor() {
@@ -116,6 +119,12 @@ class TransactionPageTest {
         return cy.get('[data-key="failed"] > .rs-picker-select-menu-item');
     }
 
+
+    getTransactionPageNavigationLandingPage() {
+        return cy.get('.rs-pagination-btn-active');
+    }
+    
+
     getTransactionPageNavigationHolder1() {
         return cy.get('[aria-label=');
     }
@@ -135,6 +144,9 @@ class TransactionPageTest {
     }
     getTransactionFilterOkButton() {
         return cy.get('.rs-picker-toolbar-right > .rs-btn');
+    }
+    getTransactionExportBtn(){
+        return cy.get('.space-x-3 > .rs-btn > div', { timeout: 100000});
     }
 }
 

@@ -1,7 +1,4 @@
 import { common } from "../../fixtures/prd/common";
-// import {LoginPageTest, SidebarMenuTest, AccountsPageTest} from "../../fixtures/prd/locators";
-import { sidebarmenu_locators, accountspage_locators,
-    accountdetails_locators, settlement_locators, transactionpage_locators } from "../../fixtures/prd/locators";
 import filterTransactions from '../../functions/balanceChecker/filterTransactions';
 import AccountsPageTest from '../../pages/accountPage';
 import LoginPageTest from '../../pages/loginPage';
@@ -9,14 +6,15 @@ import SidebarMenuTest from '../../pages/sidebarMenu';
 import AccountDetailsPageTest from '../../pages/accountDetailsPage';
 import SettlementPage from '../../pages/settlementPage';
 import TransactionPageTest from '../../pages/transactionPage';
-
 import moment from 'moment';
 const { categorizeSettlementRows } = require('../../functions/balanceChecker/settlementUtils');
+
 // npx cypress run --spec "cypress/e2e/BalanceChecker/*"
 // npx cypress run --spec "cypress/e2e/BalanceChecker/Settlement_Balance.cy.js"
 // npx cypress open
 
 Cypress.on('uncaught:exception', (err) => {
+        // Handle specific errors gracefully
     if (err.message.includes('canceled') || err.message.includes('specific error message to ignore')) {
         return false;
     }
@@ -43,15 +41,15 @@ const exportFilePath = 'cypress/downloads/settlement_details.xlsx';
 const transactionFilePath = 'cypress/downloads/transaction_exported.csv';
 const filpath = 'cypress/e2e/Reports/BalanceChecker/Settlement_Balance.xlsx'; //changed to excel path file
 const sheetName = "SETTLEMENT BALANCE";
-const merchantlist = ["EXNESS LIMITED"];
+// const merchantlist = ["EXNESS LIMITED"];
 // const merchantlist = ["FooBar Prod"];
-// const merchantlist = [
-//     "EXNESS LIMITED",
-//     "RIVALRY LIMITED",
-//     "TECHSOLUTIONS (CY) GROUP LIMITED",
-//     "TECHOPTIONS (CY) GROUP LIMITED",
-//     "ZOTA TECHNOLOGY PTE LTD"
-// ];
+const merchantlist = [
+    "EXNESS LIMITED",
+    "RIVALRY LIMITED",
+    "TECHSOLUTIONS (CY) GROUP LIMITED",
+    "TECHOPTIONS (CY) GROUP LIMITED",
+    "ZOTA TECHNOLOGY PTE LTD"
+];
 const Merchants = merchantlist.slice();
 
 const login = new LoginPageTest();
@@ -65,7 +63,7 @@ const transactions = new TransactionPageTest();
 describe('Assert Exported File', () => {
     let currentRow = 2;
     Merchants.forEach((merchant) => {
-    it.only(`Settlement balance: ${merchant}`, () => {
+    it(`Settlement balance: ${merchant}`, () => {
         cy.task('deleteFile', transactionFilePath).then((message) => {
             cy.log(message);
         });
@@ -91,39 +89,27 @@ describe('Assert Exported File', () => {
         }
 
         // click sitolment tab
-        accountDetails.getAccountDetailsSettlementTab({timeout: 10000}).click();
-        settlement.getSettlementSolutionMenu({timeout:10000}).contains('QRPH').click();
-
-        transactions.getTransactionTableRow({timeout:10000}).its('length').then((rowCount) => {
-
-            // let startRow = (pageNav - 1) * 20 + 1;
+        accountDetails.getAccountDetailsSettlementTab().click();
+        settlement.getSettlementSolutionMenu().contains('QRPH').click();
+        transactions.getTransactionTableRow().its('length').then((rowCount) => {
             const rowcount = rowCount+1;
-            // Utility function to generate locator string
-            const getLocator = (x, baseLocator) => `${settlement_locators.locator_base1}${x}${settlement_locators.locator_base2}${baseLocator}`;
             for (let x = 2; x <= rowcount; x++) {
-                const checkbox = getLocator(x, settlement_locators.settlement_checkbox);
-                // const recordTime = getLocator(x, settlement_locators.settlement_recordtime);
-                // const cutoff = getLocator(x, settlement_locators.settlement_cutoff);
                 const recordTime = settlement.getSettlementRecordTime(x)
                 const cutoff = settlement.getSettlementCutoff(x)
-                const accountnumber = getLocator(x, settlement_locators.settlement_accountnumber);
-                const accountname = getLocator(x, settlement_locators.settlement_accountname);
-                const settlementTransactionNum = getLocator(x, settlement_locators.settlement_transaction_num);
-                const status = getLocator(x, settlement_locators.settlement_status);
 
                 settlement.getSettlementStatus(x).invoke('text').then((settlement_status)=>{
                     if (settlement_status === 'completed') {
                         cy.log(`Skip settlement status: ${settlement_status}.`);
                         return;
                     }
-                    settlement.getSettlementCheckbox(x, {timeout: 3250}).click();
+                    settlement.getSettlementCheckbox(x).click();
                     // Click the export button
-                    cy.get(':nth-child(7) > .rs-btn > div', { timeout: 10000, delay: 1200}).click();
+                    settlement.getSettlementExportBtn().click();
                     cy.wait(1500);
 
                     // Wait for the button to change to "Download file"
-                    cy.get(':nth-child(7) > .rs-btn > div', { timeout: 100000 })
-                    .should('have.text', 'Download file').then((exportbutton) => {
+                    settlement.getSettlementExportBtn().should('have.text', 'Download file')
+                    .then((exportbutton) => {
                         // Click the download button now that it is available
                         cy.get(exportbutton).click();
                     });
@@ -134,7 +120,6 @@ describe('Assert Exported File', () => {
                         accountNumber: `C${currentRow}`,
                         merchantName: `D${currentRow}`,
                         settlementTransactionNo: `E${currentRow}`,
-
                         totalAmount: `F${currentRow}`,
                         totalNetAmount: `G${currentRow}`,
                         settlementStatus: `H${currentRow}`,
@@ -176,17 +161,14 @@ describe('Assert Exported File', () => {
                             //account number
                             cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.accountNumber, value: accountNumber });
                         });
-
                         settlement.getSettlementAccountName(x).invoke('text').then((merchantName) => {
                             //merchant name
                             cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.merchantName, value: merchantName });
                         });
-
                         settlement.getSettlementTransactionNumber(x).invoke('text').then((settlementTransactionNo) => {
                             //merchant name
                             cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.settlementTransactionNo, value: settlementTransactionNo });
                         });
-
                     });
 
                     //totalSettlmentAmountRegularTransactions vs ApprovedTransactions
@@ -224,13 +206,6 @@ describe('Assert Exported File', () => {
                         });
                     });
 
-                    //ComputedTotalSettledAmount vs TotalSettledAmount
-                    // cy.get('@ComputedTotalSettledAmount').then((ComputedTotalSettledAmount) => {
-                    //     cy.get('@TotalSettledAmount').then((TotalSettledAmount) => {
-                    //         expect(ComputedTotalSettledAmount).to.equal(TotalSettledAmount);
-                    //     });
-                    // });
-
                     cy.get('@ComputedTotalSettledAmount').then((ComputedTotalSettledAmount) => {
                         cy.get('@TotalSettledAmount').then((TotalSettledAmount) => {
                             // Wrap the values to ensure proper chaining and comparison
@@ -240,27 +215,27 @@ describe('Assert Exported File', () => {
                     
                     cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.settlementDetails, value: "PASSED" });
 
-                    GetDateRange(currentRow, recordTime, cutoff).then((dateRange) => {
-                        cy.wrap(dateRange).as('dateRange');
-                        cy.log(`The date range is: ${dateRange}`);
-                        // cy.get(sidebarmenu_locators.transaction_module, {timeout: 10000}).click();
-                        // cy.get(sidebarmenu_locators.transaction_submodule, {timeout: 10000}).click();
-                        sideMenu.getTransactionModule({timeout: 10000}).click();
-                        sideMenu.getTransactionSubModule({timeout: 10000}).click();
-                        cy.wait(1500);
-                        filterTransactions(merchant, 'getTransactionTypeDeposit', 'getTransactionAllBankVendor', 'getTransactionQRPHSolution', { timeout: 10000 });
-                        //process date filter
-                        cy.get(':nth-child(10) > .w-full > .rs-picker-toggle > .rs-stack > [style="flex-grow: 1; overflow: hidden;"] > .rs-picker-toggle-textbox').click().type(dateRange, { timeout: 10000 });
-                        //click ok
-                        cy.get('.rs-picker-toolbar-right > .rs-btn', {timeout:10000, delay:5000}).click();
+                    GetDateRange(currentRow, recordTime, cutoff).then(() => {
+                        cy.get('@dateRange').then((dateRange) => {
+                            cy.log(`The date range is: ${dateRange}`);
+                            sideMenu.getTransactionModule().click();
+                            sideMenu.getTransactionSubModule().click();
+                            cy.wait(1500);
+                            filterTransactions(merchant, 'getTransactionTypeDeposit', 'getTransactionAllBankVendor', 'getTransactionQRPHSolution', { timeout: 10000 });
+                            //process date filter
+                            transactions.getTransactionProcessDateFilter().click().type(dateRange, { timeout: 10000 });
+                            //click ok
+                            transactions.getTransactionProcessDateOk().click();
+                        });
                     });                    
 
                     // Click the export button
-                    cy.get('.space-x-3 > .rs-btn > div', { timeout: 10000, interval: 1200 }).click();
+                    transactions.getTransactionExportBtn().click();
+
                     // Wait for the button to change to "Download file"
-                    cy.get('.space-x-3 > .rs-btn > div', { timeout: 100000 }).should('have.text', 'Download file').then(() => {
+                    transactions.getTransactionExportBtn().should('have.text', 'Download file').then(() => {
                         // Click the download button now that it is available
-                        cy.get('.space-x-3 > .rs-btn > div').click();
+                        transactions.getTransactionExportBtn().click();
                     });
                     //delete settlement details file
                     cy.task('deleteFile', exportFilePath).then((message) => {
@@ -297,26 +272,21 @@ describe('Assert Exported File', () => {
                     });
                         
                     cy.reload();
-                    // // Navigate to the transaction page
-                    // cy.get(sidebarmenu_locators.accounts_module, {timeout: 10000}).should('be.visible').click();
-                    // // search the merchant name
-                    // cy.get(accountspage_locators.accounts_search_filter, {timeout: 10000}).type(merchant)
-                    sideMenu.getAccountsModule({timeout: 10000}).should('be.visible').click();
-                    accounts.getAccountSearchFilter({timeout: 10000}).type(merchant);
+                    // Navigate to the transaction page
+                    sideMenu.getAccountsModule().should('be.visible').click();
+                    // search the merchant name
+                    accounts.getAccountSearchFilter().type(merchant);
                     cy.wait(3500)
                     if (merchant === 'TECHSOLUTIONS (CY) GROUP LIMITED') {
                         // click account number
-                        cy.get('[aria-rowindex="3"] > .rs-table-cell-group > .rs-table-cell-first > .rs-table-cell-content > a', {timeout: 10000}).click()
+                        accounts.getAccountAccountNumberData2ndRow().click()
                     }else{
                         // click account number
-                        cy.get(".rs-table-cell-content > a", {timeout: 10000}).click()
+                        accounts.getAccountAccountNumberData().click()
                     }
                     // click sitolment tab
-                    // cy.get(accountdetails_locators.settlement_tab, {timeout: 10000}).click()
-                    // cy.get(settlement_locators.solution_menu, {timeout: 10000}).contains('QRPH').click();
-
-                    accountDetails.getAccountDetailsSettlementTab({timeout: 10000}).click();
-                    settlement.getSettlementSolutionMenu({timeout: 10000}).contains('QRPH').click();
+                    accountDetails.getAccountDetailsSettlementTab().click();
+                    settlement.getSettlementSolutionMenu().contains('QRPH').click();
 
                     cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.settlementStatus, value: settlement_status });
                     settlement.getSettlementStatus(x).invoke('text').then((settlement_status) => {
@@ -333,7 +303,7 @@ describe('Assert Exported File', () => {
 });//end of each merchant loop
 });//end of describe
 
-const GetDateRange = (index, recordTime, cutoff) => {
+function GetDateRange (index, recordTime, cutoff) {
     const sheetCells = {
         settlementDate: `A${index}`,
         settlementCutoff: `B${index}`,
@@ -350,7 +320,7 @@ const GetDateRange = (index, recordTime, cutoff) => {
         const record_month = record_dateParts[1]; // 07
         const record_day = record_dateParts[2]; // 28
 
-        const settlement_record_date = '20' + record_year + '/' + record_month + '/' + record_day;
+        let settlement_record_date = '20' + record_year + '/' + record_month + '/' + record_day;
 
         return cutoff.invoke('text').then((settlement_cutoff) => {
             let settlement_cutoff_date;
@@ -378,7 +348,7 @@ const GetDateRange = (index, recordTime, cutoff) => {
             cy.log(`The settlement record date: ` + settlement_record_date);
             cy.log(`The settlement cut-off date: ` + settlement_cutoff_date);
 
-            const dateRange = settlement_record_date + ' ~ ' + settlement_cutoff_date;
+            let dateRange = settlement_record_date + ' ~ ' + settlement_cutoff_date;
 
             //settlement date
             cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.settlementDate, value: settlement_record_date });
@@ -386,7 +356,8 @@ const GetDateRange = (index, recordTime, cutoff) => {
             cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.settlementCutoff, value: settlement_cutoff_date });
 
             // Wrap the final dateRange to make it accessible for later Cypress commands
-            return dateRange;
+            cy.log('end of the GetDateRange')
+            cy.wrap(dateRange).as('dateRange');
         });
     });
 };
@@ -416,6 +387,7 @@ function processSettlementData(exportFilePath, sheetIndex) {
 
 function processSettlementRows(data) {
     const settlementRows = categorizeSettlementRows(data);
+    
     // Calculate totals for each category using a single pass for performance
     const getTotalAmount = (rows, field) => rows.reduce((sum, row) => sum + parseFloat(row[field] || 0), 0);
 

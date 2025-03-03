@@ -9,7 +9,7 @@ class AccountsPageTest {
         return cy.get(".mb-4 > :nth-child(2) > .rs-btn");
     }
     getAccountSearchFilter() {
-        return cy.get("#search");
+        return cy.get("#search", {timeout: 10000});
     }
     getAccountTypeFilter() {
         return cy.get(".rs-form > :nth-child(2)");
@@ -39,10 +39,10 @@ class AccountsPageTest {
         return cy.get(":nth-child(6) > .rs-table-cell > .rs-table-cell-content");
     }
     getAccountAccountNumberData() {
-        return cy.get(".rs-table-cell-content > a");
+        return cy.get(".rs-table-cell-content > a", {timeout: 10000});
     }
     getAccountAccountNumberData2ndRow() {
-        return cy.get("[aria-rowindex='3'] > .rs-table-cell-group > .rs-table-cell-first > .rs-table-cell-content > a");
+        return cy.get("[aria-rowindex='3'] > .rs-table-cell-group > .rs-table-cell-first > .rs-table-cell-content > a", {timeout: 10000});
     }
     getAccountPagination() {
         return cy.get(".rs-pagination");

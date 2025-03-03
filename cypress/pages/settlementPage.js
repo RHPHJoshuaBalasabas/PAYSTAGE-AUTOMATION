@@ -1,6 +1,6 @@
 class SettlementPage {
     getSettlementSolutionMenu() {
-        return cy.get('.p-4');
+        return cy.get('.p-4', {timeout:10000});
     }
     getSettlementLocatorBase1() {
         return cy.get(`[aria-rowindex=""] > .rs-table-cell-group > `);
@@ -14,7 +14,7 @@ class SettlementPage {
     }
 
     getSettlementCheckbox(x){
-        return cy.get(`[aria-rowindex="${x}"] > .rs-table-cell-group > .rs-table-cell-first > .rs-table-cell-content > .flex > .rs-checkbox > .rs-checkbox-checker > label > .rs-checkbox-wrapper`)
+        return cy.get(`[aria-rowindex="${x}"] > .rs-table-cell-group > .rs-table-cell-first > .rs-table-cell-content > .flex > .rs-checkbox > .rs-checkbox-checker > label > .rs-checkbox-wrapper`, {timeout: 3250})
     }
     getSettlementRecordTime(x){
         return cy.get(`[aria-rowindex="${x}"] > .rs-table-cell-group > [aria-colindex="2"] > .rs-table-cell-content > .flex > span`)
@@ -33,6 +33,10 @@ class SettlementPage {
     }
     getSettlementStatus(x){
         return cy.get(`[aria-rowindex="${x}"] > .rs-table-cell-group > [aria-colindex="17"] > .rs-table-cell-content`)
+    }
+
+    getSettlementExportBtn(){
+        return cy.get(':nth-child(7) > .rs-btn > div', { timeout: 100000});
     }
 }
 

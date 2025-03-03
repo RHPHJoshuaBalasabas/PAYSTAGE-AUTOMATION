@@ -6,7 +6,7 @@ class AccountDetailsPageTest {
         return cy.get(".my-3 > :nth-child(2)");
     }
     getAccountDetailsSettlementTab() {
-        return cy.get(".my-3 > :nth-child(3)");
+        return cy.get(".my-3 > :nth-child(3)", {timeout: 10000});
     }
     getAccountDetailsTransactionsTab() {
         return cy.get(".my-3 > :nth-child(4)");
