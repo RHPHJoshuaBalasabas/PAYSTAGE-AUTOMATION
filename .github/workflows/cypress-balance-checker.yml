@@ -18,13 +18,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Run Settlement Balance Checker
-        run: npx cypress run --spec "cypress/e2e/BalanceChecker/Settlement_Balance.cy.js"
+      - name: Run Gcash Settlement Balance Checker
+        run: npx cypress run --spec "cypress/e2e/BalanceChecker/Settlement/GCASH_BALANCE.cy.js"
       
+      - name: Run QRPH Settlement Balance Checker
+        run: npx cypress run --spec "cypress/e2e/BalanceChecker/Settlement/QRPH_BALANCE.cy.js"
+
+      - name: Set Date Variable
+        id: date
+        run: echo "DATE=$(date +'%m/%d/%y')" >> $GITHUB_ENV
+
       - name: Upload file as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Settlement_Balance_Checker # Name of the artifact/file
+          name: "Settlement_Balance_Checker${{github.env.DATE}}" # Name of the artifact/file with date
           path: |
             cypress/e2e/Reports/BalanceChecker/Settlement_Balance.xlsx
 
@@ -52,13 +59,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
-      - name: Run Top-Up Balance Checker
-        run: npx cypress run --spec "cypress/e2e/BalanceChecker/Topup_Balance.cy.js"
+      - name: Run Instapay Top-Up Balance Checker
+        run: npx cypress run --spec "cypress/e2e/BalanceChecker/INSTAPAY_BALANCE.cy.js"
         
+      - name: Run Pesonet Top-Up Balance Checker
+        run: npx cypress run --spec "cypress/e2e/BalanceChecker/PESONET_BALANCE.cy.js"
+
+      - name: Set Date Variable
+        id: date
+        run: echo "DATE=$(date +'%m/%d/%y')" >> $GITHUB_ENV
+
       - name: Upload file as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Topup_Balance_Checker # Name of the artifact/file
+          name: "Topup_Balance_Checker${{github.env.DATE}}" # Name of the artifact/file with date
           path: |
             cypress/e2e/Reports/BalanceChecker/Topup_Balance.xlsx
 
