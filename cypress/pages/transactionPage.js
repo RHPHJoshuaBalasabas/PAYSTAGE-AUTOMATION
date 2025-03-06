@@ -83,6 +83,9 @@ class TransactionPageTest {
     getTransactionAllBankVendor() {
         return cy.get('[data-key="all_bank"] > .rs-picker-select-menu-item');
     }
+    getTransactionUpayVendor() {
+        return cy.get('[data-key="upay"] > .rs-picker-select-menu-item');
+    }
     getTransactionTopPayVendor() {
         return cy.get('[data-key="top_pay"] > .rs-picker-select-menu-item');
     }
@@ -96,8 +99,14 @@ class TransactionPageTest {
     getTransactionQRPHSolution() {
         return cy.get('[data-key="qrph"] > .rs-picker-select-menu-item');
     }
+    getTransactionGCashSolution() {
+        return cy.get('[data-key="gcash"] > .rs-picker-select-menu-item');
+    }
     getTransactionInstapaySolution() {
         return cy.get('[data-key="instapay"] > .rs-picker-select-menu-item');
+    }
+    getTransactionPesonetSolution() {
+        return cy.get('[data-key="pesonet"] > .rs-picker-select-menu-item');
     }
     getTransactionLbtIndoSolution() {
         return cy.get('[data-key="local_bank_indonesia"] > .rs-picker-select-menu-item');

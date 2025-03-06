@@ -1,13 +1,13 @@
-import { common } from "../../fixtures/prd/common";
-import filterTransactions from '../../functions/balanceChecker/filterTransactions';
-import LoginPageTest from '../../pages/loginPage';
-import SidebarMenuTest from '../../pages/sidebarMenu';
-import TransactionPageTest from '../../pages/transactionPage';
-import TopupBalancePageTest from '../../pages/topupBalancePage';
-import TopupHistoryPageTest from '../../pages/topupHistory';
+import { common } from "../../../fixtures/prd/common";
+import filterTransactions from '../../../functions/balanceChecker/filterTransactions';
+import LoginPageTest from '../../../pages/loginPage';
+import SidebarMenuTest from '../../../pages/sidebarMenu';
+import TransactionPageTest from '../../../pages/transactionPage';
+import TopupBalancePageTest from '../../../pages/topupBalancePage';
+import TopupHistoryPageTest from '../../../pages/topupHistory';
 
-// npx cypress run --spec "cypress/e2e/BalanceChecker/*"
-// npx cypress run --spec "cypress/e2e/BalanceChecker/Topup_Balance.cy.js"
+// npx cypress run --spec "cypress/e2e/BalanceChecker/Topup/*"
+// npx cypress run --spec "cypress/e2e/BalanceChecker/Topup/INSTAPAY_BALANCE.cy.js"
 // npx cypress open
 
 // Cypress.config('defaultCommandTimeout', 10000);
@@ -32,7 +32,7 @@ const exportFilePath = 'cypress/downloads/instapay_withdrawal.csv';
 const topupFilePath = 'cypress/downloads/top-ups.csv';
 
 const filpath = 'cypress/e2e/Reports/BalanceChecker/Topup_Balance.xlsx'; //changed to excel path file
-const sheetName = "TOPUP BALANCE";
+const sheetName = "INSTAPAY TOPUP BALANCE";
 // const merchantlist = ["RIVALRY LIMITED"];
 // const merchantlist = ["FooBar Prod"];
 const merchantlist = [
@@ -256,7 +256,7 @@ const GoToTopupHistory = (index, merchantName, totalTopupDisplayed) => {
         if (merchantName == 'RIVALRY LIMITED'){
             // finalComputed = totalTopupBalance - trimmedPeso_Topup - 481022.02    //rivalry pesonet topup
             finalComputed = totalTopupBalance   //rivalry pesonet topup
-            cy.log(`Rivalry PesoNet Topup: ${finalComputed}`)
+            cy.log(`Rivalry Instapay Topup: ${finalComputed}`)
         }else{
             // finalComputed = totalTopupBalance - trimmedPeso_Topup
             finalComputed = totalTopupBalance

@@ -11,6 +11,7 @@ const filterTransactions=(merchantName,transactionType, vendorType, solution) =>
 
         transactions.getTransactionDropdownVendor().should('be.visible', {timeout: 3500, interval: 1200}).click();
         transactions[vendorType]().click();
+        cy.wait(3000)
 
         transactions.getTransactionDropdownSolution()
         .should('be.visible', {timeout: 3500, interval: 1200}).click();

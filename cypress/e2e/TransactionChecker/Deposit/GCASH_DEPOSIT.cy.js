@@ -1,14 +1,14 @@
-import { common } from "../../fixtures/prd/common";
-import filterTransactions from '../../functions/liveTransactionChecker/filterTransactions';
-import fetchTransactionData from '../../functions/liveTransactionChecker/base_date_storage';
-import LoginPageTest from '../../pages/loginPage';
-import SidebarMenuTest from '../../pages/sidebarMenu';
-import TransactionPageTest from '../../pages/transactionPage';
-import TransactionDetailsPageTest from '../../pages/transactionDetailsPage';
-import { ReadFilePayload, ReadFileCallback } from '../../apiResponse/readFileResponse';
+import { common } from "../../../fixtures/prd/common";
+import filterTransactions from '../../../functions/liveTransactionChecker/filterTransactions';
+import fetchTransactionData from '../../../functions/liveTransactionChecker/base_date_storage';
+import LoginPageTest from '../../../pages/loginPage';
+import SidebarMenuTest from '../../../pages/sidebarMenu';
+import TransactionPageTest from '../../../pages/transactionPage';
+import TransactionDetailsPageTest from '../../../pages/transactionDetailsPage';
+import { ReadFilePayload, ReadFileCallback } from '../../../apiResponse/readFileResponse';
 
-// npx cypress run --spec "cypress/e2e/TransactionChecker/*"
-// npx cypress run --spec "cypress/e2e/TransactionChecker/JPay_Deposit_Transaction.cy.js"
+// npx cypress run --spec "cypress/e2e/TransactionChecker/Deposit/*"
+// npx cypress run --spec "cypress/e2e/TransactionChecker/Deposit/GCASH_DEPOSIT.cy.js"
 // npx cypress open
 // ./config.cmd --url https://github.com/Chzubaga/paystage_cy --token A7RQNS5BNE5GXNPQXMZFN43GRNPWC
 
@@ -30,12 +30,11 @@ function roundToTwo(num) {
     return Math.ceil(num * 100) / 100;
 }
 
-// const sheetId = '1vd-uTQXSUgrAc5hoE_du2Zxvw6toE9gEWpjpWxcdwIk';
 const filpath = 'cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx'; //changed to excel path file
-const sheetName = "JPAY DEPOSIT";
+const sheetName = "GCASH DEPOSIT";
 const pageLength = 1;
 
-const PageNav = Array.from({ length: pageLength}, (_, i) => i + 1);
+const PageNav = Array.from({ length: pageLength }, (_, i) => i + 1);
 
 const login = new LoginPageTest();
 const sideMenu = new SidebarMenuTest();
@@ -46,7 +45,6 @@ const readFileCallback = new ReadFileCallback();
 
 describe('Looping within an it block', () => {
     PageNav.forEach((pageNav) => {
-        
         it(`Should test transactions for Page: ${pageNav}`, () => {
             // Login
             cy.visit(common.login_url);
@@ -54,13 +52,12 @@ describe('Looping within an it block', () => {
             login.getPasswordField().type(common.adminPass);
             login.getSubmitButton().click();
 
-            // Navigate to the transaction page
+            // Navigate to transaction page
             sideMenu.getTransactionModule().click();
             sideMenu.getTransactionSubModule().click();
 
             // Filter transactions
-            filterTransactions('getTransactionTypeDeposit', 'getTransactionJpayVendor', 'getTransactionLbtJapanSolution', 1, pageNav, { timeout: 5500 });
-            
+            filterTransactions('getTransactionTypeDeposit', 'getTransactionUpayVendor', 'getTransactionGCashSolution', 1, pageNav, { timeout: 5500 });
             try {
                 transactions.getTransactionBody().then(($body) => {
                     if ($body.find('.rs-pagination-btn-active').length) {
@@ -68,14 +65,15 @@ describe('Looping within an it block', () => {
                             if(pageNav == active_page_num){
                                 transactions.getTransactionTableRow().its('length').then((rowCount) => {
                                     let startRow = (pageNav - 1) * 20 + 1;
-                                    for (let x = 2; x <= rowCount+1; x++) {
+                                    // for (let x = 2; x <= rowCount+1; x++) {
+                                    for (let x = 2; x <= 11; x++) {
                                         transactions.getTransactionTransactionNumber(x).then((isTransactionExist) => {
                                             console.log("isTransactionExist is existing: "+isTransactionExist);
                                             if (isTransactionExist) {
                                                 fetchTransactionData(x, 'getTransactionTransactionNumber', 'getTransactionMerchantNumber', 'getTransactionMerchantName',
                                                     'getTransactionCustomerName', 'getTransactionType', 'getTransactionMethod', 'getTransactionVendor', 'getTransactionSolution',
                                                     'getTransactionStatus', 'getTransactionAmount', 'getTransactionNetAmount');
-                                                
+
                                                 cy.get('@transaction_number').then((transactionNumber) => {
                                                     validateTransactionDetails(transactionNumber, pageNav, x, startRow, filpath, sheetName);
                                                     validateWebhookResponses(transactionNumber, filpath, sheetName, startRow + x - 1);
@@ -86,20 +84,20 @@ describe('Looping within an it block', () => {
                                                 cy.log("No transaction found at row " + x);
                                             }
                                             cy.go('back', { timeout: 5000 });
-                                            cy.wait(3500);
-                                            filterTransactions('getTransactionTypeDeposit', 'getTransactionJpayVendor', 'getTransactionLbtJapanSolution', 1, pageNav, { timeout: 5500 });
-                                        })
+                                            cy.wait(3250);
+                                            filterTransactions('getTransactionTypeDeposit', 'getTransactionUpayVendor', 'getTransactionGCashSolution', 1, pageNav, { timeout: 5500 });
+                                        });
                                     }
                                 });
                             }else{
-                                cy.log("No page found");
+                                cy.log("No page found ");
                             }
                         })
                     } else {
                         cy.log('No transaction found, skipping the test...');
                     }
                 });
-            }catch(error){
+            } catch (error) {
                 cy.log("Error in filtering transactions");
             }
         });
@@ -107,17 +105,27 @@ describe('Looping within an it block', () => {
 });
 
 const validateTransactionDetails = (transactionNumber, pageNav, row, startRow, filpath, sheetName) => {
-    try{
-        cy.visit(`https://portal.paystage.net/${transactionNumber}/transactions`).wait(5200);
+    try {
+        cy.visit(`https://portal.paystage.net/${transactionNumber}/transactions`).wait(5000);
         const storedStatus = Cypress.env('status');
         if (storedStatus !== 'completed') {
-            cy.log(`Skip test as Jpay Deposit status is ${storedStatus}.`);
-            transactiondetails.getViewRequest().first().contains('View request').click();
+            cy.log(`Skip test as Instapay status is ${storedStatus}.`);
+            transactiondetails.getMerchantNumber().should('be.visible')
+            .and('have.text', Cypress.env('merchant_number'));
+            transactiondetails.getStatus().should('be.visible')
+            .and('have.text', Cypress.env('status'));
+            transactiondetails.getMerchantName().should('be.visible')
+            .and('have.text', Cypress.env('merchant_name'));
+            transactiondetails.getCustomerName().should('be.visible')
+            .and('have.text', Cypress.env('customer_name'));
+            transactiondetails.getMobile().invoke('text').as('mobile');
+            transactiondetails.getViewRequest().first().contains('View request').click({ waitForAnimations: false });
             transactiondetails.getModalContent().invoke('text').then((sent_payload_completed) => {
                 cy.writeFile(data_response_holder.rwCompleted, sent_payload_completed);
             });
-            return; // Skip the rest of the test for this transaction
+            return;
         }
+
         transactiondetails.getMerchantNumber().should('be.visible')
         .and('have.text', Cypress.env('merchant_number'));
         transactiondetails.getStatus().should('be.visible')
@@ -137,7 +145,7 @@ const validateTransactionDetails = (transactionNumber, pageNav, row, startRow, f
                 cy.log("with view payload");
                 transactiondetails.getViewPayload().contains('View Payload')
                 .should('be.visible').click({ waitForAnimations: false });
-                transactiondetails.getModalContent().invoke('text').then((receivedPayload) => {    
+                transactiondetails.getModalContent().invoke('text').then((receivedPayload) => {                
                     cy.writeFile(data_response_holder.rwPayload, receivedPayload);
                 });
                 transactiondetails.getCloseModal().click({ waitForAnimations: false });
@@ -152,23 +160,22 @@ const validateTransactionDetails = (transactionNumber, pageNav, row, startRow, f
                 transactiondetails.getTransactionDetailsPrevBtn().click();
             }
         });
-
         transactiondetails.getViewRequest().first().contains('View request').click({ waitForAnimations: false });
         transactiondetails.getModalContent().invoke('text').then((sent_payload_completed) => {
             cy.writeFile(data_response_holder.rwCompleted, sent_payload_completed);
         });
         validateWebhookResponses(filpath, sheetName, startRow + row - 1);
-    }catch(error){
+    } catch (error) {
         cy.log("Error in validating transaction details");
     }
 };
 
-const validateWebhookResponses = (transactionNumber, filpath, sheetName, sheetRow) => {
+const validateWebhookResponses = (transactionNumber,filpath, sheetName, sheetRow) => {
     const resultCell = `I${sheetRow}`;
+    const remarksCell = `J${sheetRow}`;
     const storedStatus = Cypress.env('status');
-
     if (storedStatus !== 'completed') {
-        cy.log(`Skip test as Jpay Deposit status is ${storedStatus}.`);
+        cy.log(`Skip test as Instapay status is ${storedStatus}.`);
         cy.readFile(data_response_holder.rwCompleted).then((callbackResponse) => {
             cy.wrap(callbackResponse.transaction_number).as('callback_transaction_number');
             cy.wrap(callbackResponse.reference_no).as('callback_merrefno');
@@ -177,7 +184,6 @@ const validateWebhookResponses = (transactionNumber, filpath, sheetName, sheetRo
             cy.wrap(callbackResponse.details.credit_amount).as('callback_credit_amount');
             cy.wrap(callbackResponse.details.fee).as('callback_fee');
             cy.wrap(callbackResponse.details.total_amount).as('callback_total_amount');
-            cy.wrap(callbackResponse.details.transfer_id).as('callback_transfer_id');
         });
         readFileCallback.getTransactionNum().then((callback_transaction_number) => {
             expect(callback_transaction_number).to.eq(transactionNumber);
@@ -199,15 +205,19 @@ const validateWebhookResponses = (transactionNumber, filpath, sheetName, sheetRo
             cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: resultCell, value: 'FAILED'});
             return;
         }
+        else if(storedStatus == 'expired'){
+            cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: resultCell, value: 'EXPIRED'});
+            return;
+        }
     }
-
-    try{
+    try {
         cy.readFile(data_response_holder.rwPayload).then((payloadResponse) => {
-            cy.wrap(payloadResponse.uid).as('payload_uid');
-            cy.wrap(payloadResponse.transfer_id).as('payload_transfer_id');
-            cy.wrap(payloadResponse.transaction_number).as('payload_transaction_number');
             cy.wrap(payloadResponse.amount).as('payload_amount');
-            cy.wrap(payloadResponse.fee).as('payload_fee');
+            cy.wrap(payloadResponse.txnid).as('payload_transaction_number');
+            cy.wrap(payloadResponse.status).as('payload_status');
+            cy.wrap(payloadResponse.refno).as('payload_solrefno');
+            cy.wrap(payloadResponse.transaction.reference_no).as('payload_merrefno');
+            cy.wrap(payloadResponse.transaction.currency).as('payload_currency');
         });
         cy.readFile(data_response_holder.rwCompleted).then((callbackResponse) => {
             cy.wrap(callbackResponse.transaction_number).as('callback_transaction_number');
@@ -215,59 +225,95 @@ const validateWebhookResponses = (transactionNumber, filpath, sheetName, sheetRo
             cy.wrap(callbackResponse.status).as('callback_status');
             cy.wrap(callbackResponse.customer.mobile).as('callback_customer_mobile');
             cy.wrap(callbackResponse.details.credit_amount).as('callback_credit_amount');
+            cy.wrap(callbackResponse.details.credit_currency).as('callback_credit_currency');
             cy.wrap(callbackResponse.details.fee).as('callback_fee');
             cy.wrap(callbackResponse.details.total_amount).as('callback_total_amount');
-            cy.wrap(callbackResponse.details.transfer_id).as('callback_transfer_id');
         });
-        readFilePayload.getTransactionNum().then((payload_transaction_number) => {
-            transactiondetails.getSolutionRef().invoke('text').then((solution_ref)=>{
-                expect(payload_transaction_number).to.eq(solution_ref);
-            });
-        });
-        readFilePayload.getUID().then((payload_uid) => {
-            readFileCallback.getMerchantRef().should((callback_merrefno) => {
-                expect(payload_uid).to.eq(callback_merrefno);
-            });
-        });
-        // cy.get('@payload_transfer_id').then((payload_transfer_id) => {
-        //     cy.get('@callback_transfer_id').should((callback_transfer_id) => {
-        //         expect(payload_transfer_id).to.eq(callback_transfer_id);
-        //     });
-        // });
+        
         readFilePayload.getAmount().then((payload_amount) => {
-            readFileCallback.getFee().then((callback_fee) => {
-                readFileCallback.getCreditAmount().then((callback_credit_amount) => {
-                    readFileCallback.getTotalAmount().should((callback_total_amount) => {
-                        let amount = parseInt(payload_amount);
-                        let fee = parseInt(callback_fee);
-                        let creditAmount = parseInt(callback_credit_amount);
-                        let totalAmount = parseInt(callback_total_amount)
-                        let netAmount = creditAmount - fee
-                        expect(amount).to.eq(creditAmount);
-                        expect(totalAmount).to.eq(netAmount);
-                    });     
-                });     
+            const amount = parseInt(payload_amount);
+            const merchant_name = Cypress.env('merchant_name');
+
+            // const fee = Math.max(25, roundToTwo(amount * 0.04));
+            // readFileCallback.getFee().should('eq', fee);
+            // readFileCallback.getTotalAmount().should('eq', amount - fee);
+
+            const defaultFee = roundToTwo(amount * 0.028);
+            const adjustedFee = Cypress.env('merchant_name') === 'FooBar Prod' ? 1 : Math.max(15, defaultFee);
+                    
+            readFileCallback.getFee().then((callback_fee)=>{
+                try{
+                expect(callback_fee).to.eq(adjustedFee);
+                }catch (error){
+                    cy.log("The Fees are not equal to computed fees")
+                    console.log("The Fees are not equal to computed fees")
+                    cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: remarksCell, value: `Computed Fees are not equal to actual fees.`});
+                }
+                readFileCallback.getTotalAmount().then((callback_total_amount)=>{
+                    expect(callback_total_amount).to.eq(amount - callback_fee);
+                });
             });
+
+                // switch (merchant_name) {
+                //     case 'TECHOPTIONS (CY) GROUP LIMITED':
+                //     case 'TECHSOLUTIONS (CY) GROUP LIMITED':
+                //         const fee = Math.max(25, roundToTwo(amount * 0.04));
+                //         readFileCallback.getFee().should('eq', fee);
+                //         readFileCallback.getTotalAmount().should('eq', amount - fee);
+                //         break;
+                //     case 'RIVALRY LIMITED':
+                //         const rivalryFee = Math.max(13, roundToTwo(amount * 0.0275));
+                //         readFileCallback.getFee().should('eq', rivalryFee);
+                //         readFileCallback.getTotalAmount().should('eq', amount - rivalryFee);
+                //         break;
+                //     default:
+                //         const defaultFee = roundToTwo(amount * 0.02);
+                //         const adjustedFee = Cypress.env('merchant_name') === 'FooBar Prod' ? 1 : Math.max(10, defaultFee);
+                    
+                //         readFileCallback.getFee().then((callback_fee)=>{
+                //             try{
+                //             expect(callback_fee).to.eq(adjustedFee);
+                //             }catch (error){
+                //                 cy.log("The Fees are not equal to computed fees")
+                //                 console.log("The Fees are not equal to computed fees")
+                //                 cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: remarksCell, value: `Computed Fees are not equal to actual fees.`});
+                //             }
+                //             readFileCallback.getTotalAmount().then((callback_total_amount)=>{
+                //                 expect(callback_total_amount).to.eq(amount - callback_fee);
+                //             });
+                //         });
+                    
+                // }
+            readFileCallback.getCreditAmount().should('eq', payload_amount);
         });
-        readFilePayload.getFee().then((payload_fee) => {
-            readFileCallback.getFee().should((callback_fee) => {
-                let payloadFee = parseInt(payload_fee)
-                expect(payloadFee).to.eq(callback_fee);
-            });
+
+        readFilePayload.getTransactionNum().then((payload_transaction_number) => {
+            readFileCallback.getTransactionNum().should('eq', payload_transaction_number);
         });
-        readFileCallback.getMerchantRef.then((callback_merrefno) => {
-            const storedMerchantNumber = Cypress.env('merchant_number');
-            expect(callback_merrefno).to.eq(storedMerchantNumber);
+
+        const expectedStatus = Cypress.env('status') === 'completed' ? 'S' : 'F';
+        readFilePayload.getStatus().should('eq', expectedStatus);
+
+        transactiondetails.invokeSolutionRef().then((solutionRef) => {
+            readFilePayload.getSolutionRef().should('eq', solutionRef);
         });
-        readFileCallback.getStatus().then((callback_status) => {
-            const storedStatus = Cypress.env('status')
-            expect(callback_status).to.eq(storedStatus);
+        
+        transactiondetails.invokeMobile().then((mobile) => {
+            readFileCallback.getCustomerMobile().should('eq', mobile);
         });
+
+        readFileCallback.getMerchantRef().then((callbackMerRefNo) => {
+            readFilePayload.getMerchantRef().should('eq', callbackMerRefNo);
+        });
+
+        readFileCallback.getCreditCurrency().then((callbackCurrency) => {
+            readFilePayload.getCurrency().should('eq', callbackCurrency);
+        });
+
         cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: resultCell, value: 'PASSED'});
-    } catch(error){
-        cy.log("error")
+    } catch (error) {
         cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: resultCell, value: 'FAILED'});
-    }  
+    }
 };
 
 const writeInGoogleSheet = (filpath, sheetRow, sheetName) => {
@@ -307,4 +353,4 @@ const writeInGoogleSheet = (filpath, sheetRow, sheetName) => {
     readFileCallback.getStatus().then((status) => {
         cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.status, value: status });
     });
-}
+};

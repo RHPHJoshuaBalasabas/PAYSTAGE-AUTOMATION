@@ -1,16 +1,16 @@
-import { common } from "../../fixtures/prd/common";
-import filterTransactions from '../../functions/balanceChecker/filterTransactions';
-import AccountsPageTest from '../../pages/accountPage';
-import LoginPageTest from '../../pages/loginPage';
-import SidebarMenuTest from '../../pages/sidebarMenu';
-import AccountDetailsPageTest from '../../pages/accountDetailsPage';
-import SettlementPage from '../../pages/settlementPage';
-import TransactionPageTest from '../../pages/transactionPage';
+import { common } from "../../../fixtures/prd/common";
+import filterTransactions from '../../../functions/balanceChecker/filterTransactions';
+import AccountsPageTest from '../../../pages/accountPage';
+import LoginPageTest from '../../../pages/loginPage';
+import SidebarMenuTest from '../../../pages/sidebarMenu';
+import AccountDetailsPageTest from '../../../pages/accountDetailsPage';
+import SettlementPage from '../../../pages/settlementPage';
+import TransactionPageTest from '../../../pages/transactionPage';
 import moment from 'moment';
-const { categorizeSettlementRows } = require('../../functions/balanceChecker/settlementUtils');
+const { categorizeSettlementRows } = require('../../../functions/balanceChecker/settlementUtils');
 
-// npx cypress run --spec "cypress/e2e/BalanceChecker/*"
-// npx cypress run --spec "cypress/e2e/BalanceChecker/Settlement_Balance.cy.js"
+// npx cypress run --spec "cypress/e2e/BalanceChecker/Settlement/*"
+// npx cypress run --spec "cypress/e2e/BalanceChecker/Settlement/GCASH_BALANCE.cy.js"
 // npx cypress open
 
 Cypress.on('uncaught:exception', (err) => {
@@ -40,14 +40,12 @@ function formatCurrency(amount) {
 const exportFilePath = 'cypress/downloads/settlement_details.xlsx';
 const transactionFilePath = 'cypress/downloads/transaction_exported.csv';
 const filpath = 'cypress/e2e/Reports/BalanceChecker/Settlement_Balance.xlsx'; //changed to excel path file
-const sheetName = "SETTLEMENT BALANCE";
+const sheetName = "GCASH BALANCE";
 // const merchantlist = ["EXNESS LIMITED"];
 // const merchantlist = ["FooBar Prod"];
 const merchantlist = [
-    "EXNESS LIMITED",
+    // "EXNESS LIMITED",
     "RIVALRY LIMITED",
-    "TECHSOLUTIONS (CY) GROUP LIMITED",
-    "TECHOPTIONS (CY) GROUP LIMITED",
     "ZOTA TECHNOLOGY PTE LTD"
 ];
 const Merchants = merchantlist.slice();
@@ -90,7 +88,7 @@ describe('Assert Exported File', () => {
 
         // click sitolment tab
         accountDetails.getAccountDetailsSettlementTab().click();
-        settlement.getSettlementSolutionMenu().contains('QRPH').click();
+        settlement.getSettlementSolutionMenu().contains('GCash').click();
         transactions.getTransactionTableRow().its('length').then((rowCount) => {
             const rowcount = rowCount+1;
             for (let x = 2; x <= rowcount; x++) {
@@ -221,7 +219,7 @@ describe('Assert Exported File', () => {
                             sideMenu.getTransactionModule().click();
                             sideMenu.getTransactionSubModule().click();
                             cy.wait(1500);
-                            filterTransactions(merchant, 'getTransactionTypeDeposit', 'getTransactionAllBankVendor', 'getTransactionQRPHSolution', { timeout: 10000 });
+                            filterTransactions(merchant, 'getTransactionTypeDeposit', 'getTransactionUpayVendor', 'getTransactionGCashSolution', { timeout: 10000 });
                             //process date filter
                             transactions.getTransactionProcessDateFilter().click().type(dateRange, { timeout: 10000 });
                             //click ok

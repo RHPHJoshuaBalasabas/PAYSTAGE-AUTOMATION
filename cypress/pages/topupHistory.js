@@ -14,6 +14,9 @@ class TopupHistoryPageTest {
     getSolutionInstapay() {
         return cy.get('[data-key="instapay"] > .rs-picker-select-menu-item', { timeout: 10000 });
     }
+    getSolutionPesonet() {
+        return cy.get('[data-key="pesonet"] > .rs-picker-select-menu-item', { timeout: 10000 });
+    }
     getTopupHistoryExportBtn() {
         return cy.get('.flex > :nth-child(2) > div', { timeout: 3500, interval: 1200 });
     }

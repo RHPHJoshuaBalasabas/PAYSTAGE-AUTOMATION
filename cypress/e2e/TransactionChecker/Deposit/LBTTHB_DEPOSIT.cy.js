@@ -1,14 +1,14 @@
-import { common } from "../../fixtures/prd/common";
-import filterTransactions from '../../functions/liveTransactionChecker/filterTransactions';
-import fetchTransactionData from '../../functions/liveTransactionChecker/base_date_storage';
-import LoginPageTest from '../../pages/loginPage';
-import SidebarMenuTest from '../../pages/sidebarMenu';
-import TransactionPageTest from '../../pages/transactionPage';
-import TransactionDetailsPageTest from '../../pages/transactionDetailsPage';
-import { ReadFilePayload, ReadFileCallback } from '../../apiResponse/readFileResponse';
+import { common } from "../../../fixtures/prd/common";
+import filterTransactions from '../../../functions/liveTransactionChecker/filterTransactions';
+import fetchTransactionData from '../../../functions/liveTransactionChecker/base_date_storage';
+import LoginPageTest from '../../../pages/loginPage';
+import SidebarMenuTest from '../../../pages/sidebarMenu';
+import TransactionPageTest from '../../../pages/transactionPage';
+import TransactionDetailsPageTest from '../../../pages/transactionDetailsPage';
+import { ReadFilePayload, ReadFileCallback } from '../../../apiResponse/readFileResponse';
 
-// npx cypress run --spec "cypress/e2e/TransactionChecker/*"
-// npx cypress run --spec "cypress/e2e/TransactionChecker/LBTIDR_Deposit_Transaction.cy.js"
+// npx cypress run --spec "cypress/e2e/TransactionChecker/Deposit/*"
+// npx cypress run --spec "cypress/e2e/TransactionChecker/Deposit/LBTTHB_DEPOSIT.cy.js"
 // npx cypress open
 // ./config.cmd --url https://github.com/Chzubaga/paystage_cy --token A7RQNS5BNE5GXNPQXMZFN43GRNPWC
 
@@ -32,7 +32,7 @@ function roundToTwo(num) {
 
 // const sheetId = '1vd-uTQXSUgrAc5hoE_du2Zxvw6toE9gEWpjpWxcdwIk';
 const filpath = 'cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx'; //changed to excel path file
-const sheetName = 'TOPPAY LBT IND';
+const sheetName = 'TOPPAY LBT THB';
 const pageLength = 1;
 
 const PageNav = Array.from({ length: pageLength}, (_, i) => i + 1);
@@ -59,7 +59,7 @@ describe('Looping within an it block', () => {
             sideMenu.getTransactionSubModule().click();
             
             // Filter transactions
-            filterTransactions('getTransactionTypeDeposit', 'getTransactionTopPayVendor', 'getTransactionLbtIndoSolution', 1, pageNav, { timeout: 5500 });
+            filterTransactions('getTransactionTypeDeposit', 'getTransactionTopPayVendor', 'getTransactionLbtThaiSolution', 1, pageNav, { timeout: 5500 });
             try {
                 transactions.getTransactionBody().then(($body) => {
                     if ($body.find('.rs-pagination-btn-active').length) {
@@ -86,7 +86,7 @@ describe('Looping within an it block', () => {
                                         }
                                         cy.go('back', { timeout: 5000 });
                                         cy.wait(3500);
-                                        filterTransactions('getTransactionTypeDeposit', 'getTransactionTopPayVendor', 'getTransactionLbtIndoSolution', 1, pageNav, { timeout: 5500 });
+                                        filterTransactions('getTransactionTypeDeposit', 'getTransactionTopPayVendor', 'getTransactionLbtThaiSolution', 1, pageNav, { timeout: 5500 });
                                     })
                                 }
                             });
@@ -112,7 +112,6 @@ const validateTransactionDetails = (transactionNumber, pageNav, row, startRow, f
         cy.visit(`https://portal.paystage.net/${transactionNumber}/transactions`).wait(5200);
         const storedStatus = Cypress.env('status');
         if (storedStatus !== 'completed') {
-            // cy.log(`Skip test as Local Bank Indonesia Deposit status is ${storedStatus}.`);
             transactiondetails.getMerchantNumber().should('be.visible')
             .and('have.text', Cypress.env('merchant_number'));
             transactiondetails.getStatus().should('be.visible')
@@ -126,7 +125,7 @@ const validateTransactionDetails = (transactionNumber, pageNav, row, startRow, f
             transactiondetails.getSolutionRef().invoke('text').as('solution_ref');
             transactiondetails.getMobile().invoke('text').as('mobile');
 
-            transactiondetails.getViewRequest().first().contains('View request').click({ waitForAnimations: false });
+            transactiondetails.getViewRequest().first().contains('View request').click();
             transactiondetails.getModalContent().invoke('text').then((sent_payload_completed) => {
                 cy.writeFile(data_response_holder.rwCompleted, sent_payload_completed);
             });
@@ -207,14 +206,14 @@ const validateWebhookResponses = (filpath, sheetName, sheetRow) => {
             const amount = parseInt(callback_credit_amount)
             transactiondetails.getSettlementAmount().invoke('text').then((settlement_amount)=>{
                 const trimmedSettlementAmount = settlement_amount
-                .replace('IDR ', '') // Remove "IDR "
+                .replace('THB ', '') // Remove "THB "
                 .replace(/,/g, '')   // Remove commas
                 expect(parseInt(trimmedSettlementAmount)).to.equal(amount);
             })
             readFileCallback.getTotalAmount().then((callback_total_amount)=>{
                 transactiondetails.getSettlementTotalAmount().invoke('text').then((settlement_totalamount)=>{
                     const trimmedSettlementTotalAmount = settlement_totalamount
-                    .replace('IDR ', '') // Remove "IDR "
+                    .replace('THB ', '') // Remove "THB "
                     .replace(/,/g, '')   // Remove commas
                     expect(parseInt(trimmedSettlementTotalAmount)).to.equal(callback_total_amount);
                 })
