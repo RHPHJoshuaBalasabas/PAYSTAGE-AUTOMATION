@@ -24,14 +24,10 @@ jobs:
       - name: Run QRPH Settlement Balance Checker
         run: npx cypress run --spec "cypress/e2e/BalanceChecker/Settlement/QRPH_BALANCE.cy.js"
 
-      - name: Set Date Variable
-        id: date
-        run: echo "DATE=$(date +'%m/%d/%y')" >> $GITHUB_ENV
-
       - name: Upload file as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "Settlement_Balance_Checker${{github.env.DATE}}" # Name of the artifact/file with date
+          name: "Settlement_Balance_Checker" # Name of the artifact/file with date
           path: |
             cypress/e2e/Reports/BalanceChecker/Settlement_Balance.xlsx
 
@@ -65,14 +61,10 @@ jobs:
       - name: Run Pesonet Top-Up Balance Checker
         run: npx cypress run --spec "cypress/e2e/BalanceChecker/PESONET_BALANCE.cy.js"
 
-      - name: Set Date Variable
-        id: date
-        run: echo "DATE=$(date +'%m/%d/%y')" >> $GITHUB_ENV
-
       - name: Upload file as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "Topup_Balance_Checker${{github.env.DATE}}" # Name of the artifact/file with date
+          name: "Topup_Balance_Checker" # Name of the artifact/file with date
           path: |
             cypress/e2e/Reports/BalanceChecker/Topup_Balance.xlsx
 

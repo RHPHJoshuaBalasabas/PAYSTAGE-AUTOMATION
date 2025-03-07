@@ -1,29 +1,29 @@
 {
-  "transaction_number": "2565601772",
-  "reference_no": "256385923",
-  "status": "completed",
-  "message": "Transaction Completed",
-  "checkout_url": "https://ppi-ph.com/payments/R-wQcKTHZFo",
+  "transaction_number": "2524541055",
+  "reference_no": "XMG-71570665",
+  "status": "expired",
+  "message": "Transaction expired",
+  "checkout_url": "https://gateway.pearlpay.io/payments/Oii1tnDYYrI",
   "customer": {
-    "customer_number": "2441124443",
-    "first_name": "angelito",
-    "last_name": "fuerte",
-    "email": "angelito_fuerte@yahoo.com",
-    "mobile": "+639814867650",
-    "city": null,
+    "customer_number": "2557680500",
+    "first_name": "neilvin kenth dinsay",
+    "last_name": "barcelona",
+    "email": "neilvinkenth26@gmail.com",
+    "mobile": "+639399776010",
+    "city": "Quezon city",
     "country": "PH",
-    "state": null,
-    "zip": null,
-    "address_line_1": null,
+    "state": "Quezon city",
+    "zip": "1221",
+    "address_line_1": "4 Thaddeus st., Jordan Park homes Commmonwealth Av",
     "address_line_2": null,
-    "full_name": "angelito fuerte"
+    "full_name": "neilvin kenth dinsay barcelona"
   },
   "details": {
-    "credit_amount": 20000,
+    "credit_amount": 2000,
     "credit_currency": "PHP",
-    "fee": 400,
-    "method": "payment_provider",
-    "total_amount": 19600,
+    "fee": 56,
+    "method": "e_wallet",
+    "total_amount": 1944,
     "type": "deposit"
   }
 }

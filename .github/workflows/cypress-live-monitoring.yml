@@ -39,14 +39,10 @@ jobs:
       - name: Run Instapay Withdrawal Transaction Checker
         run: npx cypress run --spec "cypress/e2e/TransactionChecker/Withdrawal/INSTAPAY_WITHDRAWAL.cy.js"
 
-      - name: Set Date Variable
-        id: date
-        run: echo "DATE=$(date +'%m/%d/%y')" >> $GITHUB_ENV
-
       - name: Upload file as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "Live_Transaction_Checker_${{github.env.DATE}}" # Name of the artifact/file with date
+          name: "Live_Transaction_Checker" # Name of the artifact
           path: cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx
 
       - name: Upload Cypress screenshots
