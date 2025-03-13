@@ -9,7 +9,7 @@ class TopupHistoryPageTest {
         return cy.get('.rs-input-group > .rs-input', { timeout: 10000 });
     }
     getSolutionDropdown() {
-        return cy.get('.space-y-1 > .w-full > .rs-picker-toggle', { timeout: 10000 });
+        return cy.get('.flex > .w-full > .rs-picker-toggle', { timeout: 10000 });
     }
     getSolutionInstapay() {
         return cy.get('[data-key="instapay"] > .rs-picker-select-menu-item', { timeout: 10000 });

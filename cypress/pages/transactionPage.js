@@ -91,7 +91,7 @@ class TransactionPageTest {
     }
 
     getTransactionDropdownSolution() {
-        return cy.get(":nth-child(5) > .w-full > .rs-picker-toggle");
+        return cy.get(".flex > .w-full > .rs-picker-toggle");
     }
     getTransactionLbtJapanSolution() {
         return cy.get('[data-key="local_bank_japan"] > .rs-picker-select-menu-item');

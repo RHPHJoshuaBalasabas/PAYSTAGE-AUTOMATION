@@ -36,7 +36,7 @@ const sheetName = "PESONET TOPUP BALANCE";
 // const merchantlist = ["RIVALRY LIMITED"];
 // const merchantlist = ["FooBar Prod"];
 const merchantlist = [
-    // "EXNESS LIMITED",
+    "EXNESS LIMITED",
     "RIVALRY LIMITED"
     // "TECHSOLUTIONS (CY) GROUP LIMITED",
     // "TECHOPTIONS (CY) GROUP LIMITED",
