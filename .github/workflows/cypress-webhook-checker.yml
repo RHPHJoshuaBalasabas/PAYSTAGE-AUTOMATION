@@ -1,9 +1,9 @@
-name: Live Transaction Monitoring
+name: Webhook Checker
 
 on: [push, pull_request]
 
 jobs:
-  Live_Transaction_Checker:
+  Webhook_Checker:
     runs-on: ubuntu-latest
 
     steps:
