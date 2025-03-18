@@ -36,7 +36,7 @@ const sheetName = "PESONET TOPUP BALANCE";
 // const merchantlist = ["RIVALRY LIMITED"];
 // const merchantlist = ["FooBar Prod"];
 const merchantlist = [
-    "EXNESS LIMITED",
+    // "EXNESS LIMITED",
     "RIVALRY LIMITED"
     // "TECHSOLUTIONS (CY) GROUP LIMITED",
     // "TECHOPTIONS (CY) GROUP LIMITED",
@@ -235,41 +235,48 @@ const GoToTopupHistory = (index, merchantName, totalTopupDisplayed) => {
         cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.merchantName, value: merchantName });
     }
 
-    // check if the page loaded after the filter
-    topupHistory.getTopupHistoryRow().should('have.text', merchantName, { timeout: 35000 });
-    // click export button
-    topupHistory.getTopupHistoryExportBtn().click();
-    // Wait for the button to change to "Download file"
-    topupHistory.getTopupHistoryDownloadBtn().should('have.text', 'Download file').then(() => {
-        // Click the download button now that it is available
-        topupHistory.getTopupHistoryDownloadBtn().click();
-    });
+    topupHistory.getTopupHistoryRow().then((isTransactionExist) => {
+        if (isTransactionExist) {
+            // check if the page loaded after the filter
+            topupHistory.getTopupHistoryRow().should('have.text', merchantName, { timeout: 35000 });
+            // click export button
+            topupHistory.getTopupHistoryExportBtn().click();
+            // Wait for the button to change to "Download file"
+            topupHistory.getTopupHistoryDownloadBtn().should('have.text', 'Download file').then(() => {
+                // Click the download button now that it is available
+                topupHistory.getTopupHistoryDownloadBtn().click();
+            });
 
-    // Compute all topup amount with status 'completed'
-    cy.task('parseCSV', topupFilePath).then((data) => {
-        const completedWithdrawals = data.filter(row => row.Status?.trim().toLowerCase() === 'completed');
-        const totalTopupBalance = completedWithdrawals.reduce((sum, row) => {
-            return sum + parseFloat(row['Top-up Amount'].replace(/PHP |,/g, ''));
-        }, 0);
-        cy.log(`Topup history total topup balance: ${totalTopupBalance}`)
-        let finalComputed;
-        if (merchantName == 'RIVALRY LIMITED'){
-            finalComputed = totalTopupBalance - 481022.02    //rivalry pesonet topup
-            // finalComputed = totalTopupBalance   //rivalry pesonet topup
-            cy.log(`Rivalry PesoNet Topup: ${finalComputed}`)
-        }else{
-            // finalComputed = totalTopupBalance - trimmedPeso_Topup
-            finalComputed = totalTopupBalance
+            // Compute all topup amount with status 'completed'
+            cy.task('parseCSV', topupFilePath).then((data) => {
+                const completedWithdrawals = data.filter(row => row.Status?.trim().toLowerCase() === 'completed');
+                const totalTopupBalance = completedWithdrawals.reduce((sum, row) => {
+                    return sum + parseFloat(row['Top-up Amount'].replace(/PHP |,/g, ''));
+                }, 0);
+                cy.log(`Topup history total topup balance: ${totalTopupBalance}`)
+                let finalComputed;
+                if (merchantName == 'RIVALRY LIMITED'){
+                    finalComputed = totalTopupBalance - 481022.02    //rivalry pesonet topup
+                    // finalComputed = totalTopupBalance   //rivalry pesonet topup
+                    cy.log(`Rivalry PesoNet Topup: ${finalComputed}`)
+                }else{
+                    // finalComputed = totalTopupBalance - trimmedPeso_Topup
+                    finalComputed = totalTopupBalance
+                }
+                const totalTopupExported = formatCurrency(finalComputed);
+                try{
+                    expect(totalTopupExported).to.eq(totalTopupDisplayed);
+                    cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.status, value: "PASSED" });
+                }catch (error){
+                    cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.status, value: "FAILED" });
+                    cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.remarks, value: `The displayed amount ${totalTopupExported} and computed amount ${totalTopupDisplayed} are not equal.` });
+                }
+                cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.totalTopupExported, value: totalTopupExported });
+                cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.totalTopupDisplayed, value: totalTopupDisplayed });
+            });
+        } else {
+            cy.log("No transaction found at row");
+            return;
         }
-        const totalTopupExported = formatCurrency(finalComputed);
-        try{
-            expect(totalTopupExported).to.eq(totalTopupDisplayed);
-            cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.status, value: "PASSED" });
-        }catch (error){
-            cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.status, value: "FAILED" });
-            cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.remarks, value: `The displayed amount ${totalTopupExported} and computed amount ${totalTopupDisplayed} are not equal.` });
-        }
-        cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.totalTopupExported, value: totalTopupExported });
-        cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.totalTopupDisplayed, value: totalTopupDisplayed });
     });
 };

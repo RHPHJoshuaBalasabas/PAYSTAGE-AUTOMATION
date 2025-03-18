@@ -12,6 +12,9 @@ class TransactionPageTest {
         return cy.get(`[aria-rowindex="${x}"] > .rs-table-cell-group`);
     }
 
+    getTransactionTransactionProcessedDate(x) {
+        return this.getTransactionExistChecker(x).find('[aria-colindex="2"] > .rs-table-cell-content');
+    }
     getTransactionTransactionNumber(x) {
         return this.getTransactionExistChecker(x).find('[aria-colindex="3"] > .rs-table-cell-content > a');
     }

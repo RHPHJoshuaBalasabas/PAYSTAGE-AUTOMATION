@@ -33,7 +33,7 @@ function roundToTwo(num) {
 // const sheetId = '1vd-uTQXSUgrAc5hoE_du2Zxvw6toE9gEWpjpWxcdwIk';
 const filpath = 'cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx'; //changed to excel path file
 const sheetName = 'TOPPAY LBT IND';
-const pageLength = 1;
+const pageLength = 5;
 
 const PageNav = Array.from({ length: pageLength}, (_, i) => i + 1);
 

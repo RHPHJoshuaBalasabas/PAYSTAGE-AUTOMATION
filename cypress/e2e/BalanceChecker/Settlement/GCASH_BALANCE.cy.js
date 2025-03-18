@@ -45,7 +45,7 @@ const sheetName = "GCASH BALANCE";
 // const merchantlist = ["FooBar Prod"];
 const merchantlist = [
     // "EXNESS LIMITED",
-    "RIVALRY LIMITED",
+    // "RIVALRY LIMITED",
     "ZOTA TECHNOLOGY PTE LTD"
 ];
 const Merchants = merchantlist.slice();
@@ -284,7 +284,7 @@ describe('Assert Exported File', () => {
                     }
                     // click sitolment tab
                     accountDetails.getAccountDetailsSettlementTab().click();
-                    settlement.getSettlementSolutionMenu().contains('QRPH').click();
+                    settlement.getSettlementSolutionMenu().contains('GCash').click();
 
                     cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: sheetCells.settlementStatus, value: settlement_status });
                     settlement.getSettlementStatus(x).invoke('text').then((settlement_status) => {

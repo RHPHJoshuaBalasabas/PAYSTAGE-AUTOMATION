@@ -32,7 +32,7 @@ function roundToTwo(num) {
 
 const filpath = 'cypress/e2e/Reports/LiveTransactionChecker/LiveTransactionChecker.xlsx'; //changed to excel path file
 const sheetName = "QPRH DEPOSIT";
-const pageLength = 1;
+const pageLength = 5;
 
 const PageNav = Array.from({ length: pageLength }, (_, i) => i + 1);
 
@@ -65,8 +65,8 @@ describe('Looping within an it block', () => {
                             if(pageNav == active_page_num){
                                 transactions.getTransactionTableRow().its('length').then((rowCount) => {
                                     let startRow = (pageNav - 1) * 20 + 1;
-                                    // for (let x = 2; x <= rowCount+1; x++) {
-                                    for (let x = 2; x <= 11; x++) {
+                                    for (let x = 2; x <= rowCount+1; x++) {
+                                    //for (let x = 2; x <= 11; x++) {
                                         transactions.getTransactionTransactionNumber(x).then((isTransactionExist) => {
                                             console.log("isTransactionExist is existing: "+isTransactionExist);
                                             if (isTransactionExist) {

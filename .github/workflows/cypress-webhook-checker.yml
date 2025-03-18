@@ -1,0 +1,35 @@
+name: Live Transaction Monitoring
+
+on: [push, pull_request]
+
+jobs:
+  Live_Transaction_Checker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # or your preferred version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run QRPH Deposit Transaction Checker
+        run: npx cypress run --spec "cypress/e2e/TransactionChecker/Deposit/QRPH_DEPOSIT.cy.js"
+
+      - name: Upload file as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: "Wehbook_Checker" # Name of the artifact
+          path: cypress/e2e/Reports/AutomatedCheckerTool/Webhook_Checker.xlsx
+
+      - name: Upload Cypress screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-transaction-screenshots
+          path: cypress/screenshots
