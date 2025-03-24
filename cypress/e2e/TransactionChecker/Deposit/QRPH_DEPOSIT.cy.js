@@ -291,7 +291,7 @@ const validateWebhookResponses = (transactionNumber, filpath, sheetName, sheetRo
 
         cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: resultCell, value: 'PASSED'});
     } catch (error) {
-        cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: resultCell, value: 'FAILED'});
+        cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: resultCell, remarks: 'FAILED'});
     }
 };
 

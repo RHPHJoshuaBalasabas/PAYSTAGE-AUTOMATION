@@ -253,37 +253,6 @@ const validateWebhookResponses = (transactionNumber,filpath, sheetName, sheetRow
                     expect(callback_total_amount).to.eq(amount - callback_fee);
                 });
             });
-
-                // switch (merchant_name) {
-                //     case 'TECHOPTIONS (CY) GROUP LIMITED':
-                //     case 'TECHSOLUTIONS (CY) GROUP LIMITED':
-                //         const fee = Math.max(25, roundToTwo(amount * 0.04));
-                //         readFileCallback.getFee().should('eq', fee);
-                //         readFileCallback.getTotalAmount().should('eq', amount - fee);
-                //         break;
-                //     case 'RIVALRY LIMITED':
-                //         const rivalryFee = Math.max(13, roundToTwo(amount * 0.0275));
-                //         readFileCallback.getFee().should('eq', rivalryFee);
-                //         readFileCallback.getTotalAmount().should('eq', amount - rivalryFee);
-                //         break;
-                //     default:
-                //         const defaultFee = roundToTwo(amount * 0.02);
-                //         const adjustedFee = Cypress.env('merchant_name') === 'FooBar Prod' ? 1 : Math.max(10, defaultFee);
-                    
-                //         readFileCallback.getFee().then((callback_fee)=>{
-                //             try{
-                //             expect(callback_fee).to.eq(adjustedFee);
-                //             }catch (error){
-                //                 cy.log("The Fees are not equal to computed fees")
-                //                 console.log("The Fees are not equal to computed fees")
-                //                 cy.task('writeToExcel', { filePath: filpath, sheetName: sheetName, cell: remarksCell, value: `Computed Fees are not equal to actual fees.`});
-                //             }
-                //             readFileCallback.getTotalAmount().then((callback_total_amount)=>{
-                //                 expect(callback_total_amount).to.eq(amount - callback_fee);
-                //             });
-                //         });
-                    
-                // }
             readFileCallback.getCreditAmount().should('eq', payload_amount);
         });
 

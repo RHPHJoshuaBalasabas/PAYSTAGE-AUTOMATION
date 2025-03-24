@@ -18,7 +18,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "cypress": "^13.14.2",
+    "cypress": "^13.17.0",
     "cypress-file-upload": "^5.0.8",
     "exceljs": "^4.4.0",
     "mocha-junit-reporter": "^2.2.1",

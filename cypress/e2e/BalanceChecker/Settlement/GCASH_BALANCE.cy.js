@@ -45,7 +45,7 @@ const sheetName = "GCASH BALANCE";
 // const merchantlist = ["FooBar Prod"];
 const merchantlist = [
     // "EXNESS LIMITED",
-    // "RIVALRY LIMITED",
+    "RIVALRY LIMITED",
     "ZOTA TECHNOLOGY PTE LTD"
 ];
 const Merchants = merchantlist.slice();

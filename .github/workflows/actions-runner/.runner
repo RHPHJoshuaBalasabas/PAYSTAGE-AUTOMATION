@@ -1,9 +1,0 @@
-﻿{
-  "agentId": 21,
-  "agentName": "DEVQA-JESTER",
-  "poolId": 1,
-  "poolName": "Default",
-  "serverUrl": "https://pipelinesghubeus8.actions.githubusercontent.com/ivBGIAjm4sTgPmidXhuDtlKAhwsu8nLgRGSl0D3oxiS8pePF0z/",
-  "gitHubUrl": "https://github.com/Chzubaga/paystage_cy",
-  "workFolder": "Paystage Automation"
-}

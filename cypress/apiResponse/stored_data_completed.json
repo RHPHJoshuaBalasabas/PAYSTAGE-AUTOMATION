@@ -1,30 +1,30 @@
 {
-  "transaction_number": "2531844322",
-  "reference_no": "260546491",
+  "transaction_number": "2520498449",
+  "reference_no": "XMG-72331181",
   "status": "completed",
   "message": "Transaction Completed",
-  "checkout_url": "https://ppi-ph.com/payments/E8uql31mEnQ",
+  "checkout_url": "https://gateway.pearlpay.io/payments/iYNZ2MNARRk",
   "customer": {
-    "customer_number": "2553229394",
-    "first_name": "ralph",
-    "last_name": "viloria",
-    "email": "ralphchristianviloria@gmail.com",
-    "mobile": "+639511559871",
-    "city": null,
+    "customer_number": "2545091680",
+    "first_name": "andrea aurora naval",
+    "last_name": "villaflor",
+    "email": "villaflor_andrea@yahoo.com",
+    "mobile": "+639766531302",
+    "city": "Na",
     "country": "PH",
-    "state": null,
-    "zip": null,
-    "address_line_1": null,
+    "state": "Na",
+    "zip": "Na",
+    "address_line_1": "Na, Na",
     "address_line_2": null,
-    "full_name": "ralph viloria"
+    "full_name": "andrea aurora naval villaflor"
   },
   "details": {
-    "credit_amount": 1000,
+    "credit_amount": 14000,
     "credit_currency": "PHP",
-    "fee": 20,
-    "method": "payment_provider",
-    "solution": "qrph",
-    "total_amount": 980,
+    "fee": 392,
+    "method": "e_wallet",
+    "solution": "gcash",
+    "total_amount": 13608,
     "type": "deposit"
   }
 }
