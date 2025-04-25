@@ -106,13 +106,16 @@ describe('Check all merchant Top-Up Balance', () => {
                 // Format the total amount
                 const withdrawalExported = formatCurrency(totalNetAmount);
                 cy.log(`Total Withdrawal Amount for merchant ${merchant}: PHP ${withdrawalExported}`);
-                GoToTopupBalance(index, merchant, withdrawalExported)
+
+                GoToTopupWithdrawalHistory(merchant, (totalBalance) => {
+                    GoToTopupBalance(index, merchant, withdrawalExported, totalBalance)
+                });
             });
         });
     });
 });
 
-const GoToTopupBalance = (index, merchantName, withdrawalExported) => {
+const GoToTopupBalance = (index, merchantName, withdrawalExported, pesonetWithdrawal) => {
     const sheetCells = {
         withdrawalExported: `E${index+2}`,
         withdrawalDisplayed: `F${index+2}`,
@@ -133,6 +136,7 @@ const GoToTopupBalance = (index, merchantName, withdrawalExported) => {
     // search merchant name
     topupBalance.getTopupBalanceSearch().type(merchantName, { timeout: 10000 });
     cy.wait(4500);
+
     // get the total topup amount
     topupBalance.getTopupBalanceTotalTopupAmount2ndRow().invoke('text').then((totaltopup) => {
         topupBalance.getTopupBalanceTotalWithdrawalAmount2ndRow().invoke('text').then((totalwithdrawal) => {
@@ -150,12 +154,14 @@ const GoToTopupBalance = (index, merchantName, withdrawalExported) => {
                 const trimmedTopup = cleanText(totaltopup);
                 const trimmedWithdrawal = cleanText(totalwithdrawal);
                 const trimmedAvailableBalance = cleanText(availablebalance);
+                // const trimmedpesonetWithdrawal = cleanText(pesonetWithdrawal);
                 
+                const dec = trimmedWithdrawal - pesonetWithdrawal;
                 const computedAvailable = trimmedTopup - trimmedWithdrawal;
 
                 // Format and log results
                 const totalTopupDisplayed = formatCurrency(trimmedTopup);
-                const withdrawalDisplayed = formatCurrency(trimmedWithdrawal);
+                const withdrawalDisplayed = formatCurrency(dec);
                 const availableBalanceDisplayed = formatCurrency(trimmedAvailableBalance);
                 const availableBalanceComputed = formatCurrency(computedAvailable);
 
@@ -277,6 +283,63 @@ const GoToTopupHistory = (index, merchantName, totalTopupDisplayed) => {
         } else {
             cy.log("No transaction found at row");
             return;
+        }
+    });
+};
+
+
+// Go to topup withdrawal history to deduct the transfer to topup balance
+const GoToTopupWithdrawalHistory = (merchantName, callback) => {
+    sideMenu.getTopupBalanceModule().click({ timeout: 10000 });
+    cy.wait(4500);
+    
+    // Go to Topup withdrawal history
+    cy.get('.mb-3 > :nth-child(3)').click({ timeout: 10000 });
+
+    // Merchant mapping
+    const merchantMap = {
+        'EXNESS LIMITED': 'AC2374426306',
+        'RIVALRY LIMITED': 'AC2473062452',
+        'TECHSOLUTIONS (CY) GROUP LIMITED': 'AC2347670819',
+        'TECHOPTIONS (CY) GROUP LIMITED': 'AC2346446835',
+        'ZOTA TECHNOLOGY PTE LTD': 'AC2313592098'
+    };
+
+    // Type merchant name in search filter
+    const account = merchantMap[merchantName]; // Ensure accountNumber is set here
+    if (account) {
+        topupHistory.getTopupHistorySearch().type(`${account}{enter}`, { timeout: 10000 });
+        cy.wait(4500);
+        //click solution dropdown
+        topupHistory.getSolutionDropdown().click();
+        //select instapay solution
+        topupHistory.getSolutionPesonet().click();
+    }
+
+    topupHistory.getTopupHistoryRow().then((isTransactionExist) => {
+        if (isTransactionExist) {
+            // check if the page loaded after the filter
+            topupHistory.getTopupHistoryRow().should('have.text', merchantName, { timeout: 35000 });
+            // click export button
+            topupHistory.getTopupHistoryExportBtn().click();
+            // Wait for the button to change to "Download file"
+            topupHistory.getTopupHistoryDownloadBtn().should('have.text', 'Download file').then(() => {
+                // Click the download button now that it is available
+                topupHistory.getTopupHistoryDownloadBtn().click();
+            });
+
+            // Compute all topup amount with status 'completed'
+            cy.task('parseCSV', topupFilePath).then((data) => {
+                const completedWithdrawals = data.filter(row => row.Status?.trim().toLowerCase() === 'completed');
+                const totalTopupBalance = completedWithdrawals.reduce((sum, row) => {
+                    return sum + parseFloat(row['Top-up Amount'].replace(/PHP |,/g, ''));
+                }, 0);
+                cy.log(`Topup withdrawal history total topup balance: ${totalTopupBalance}`)
+                callback(totalTopupBalance);
+            });
+        } else {
+            cy.log("No transaction found at row");
+            callback(0); // or null, or handle this case accordingly
         }
     });
 };

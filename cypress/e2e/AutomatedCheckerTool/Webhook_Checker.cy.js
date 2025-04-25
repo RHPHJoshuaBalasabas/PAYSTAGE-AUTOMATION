@@ -14,12 +14,12 @@ Cypress.on('uncaught:exception', (err) => {
     if (err.message.includes('canceled') || err.message.includes('specific error message to ignore')) {
         return false;
     }
-    return true;a
+    return true;
 });
 
 const filpath = 'cypress/e2e/Reports/AutomatedCheckerTool/Webhook_Checker.xlsx'; //changed to excel path file
 const sheetName = "WEBHOOK CHECKER";
-const pageLength = 20;
+const pageLength = 50;
 
 const PageNav = Array.from({ length: pageLength }, (_, i) => i + 1);
 

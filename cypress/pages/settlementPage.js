@@ -36,7 +36,7 @@ class SettlementPage {
     }
 
     getSettlementExportBtn(){
-        return cy.get(':nth-child(7) > .rs-btn > div', { timeout: 100000});
+        return cy.get(':nth-child(7) > .rs-btn > div', { timeout: 150000});
     }
 }
 

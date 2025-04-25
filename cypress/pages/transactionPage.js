@@ -3,13 +3,11 @@ class TransactionPageTest {
         return cy.get('body', {timeout:10000});
     }
 
-
-
     getTransactionTableRow() {
         return cy.get('[class="rs-table-row"]', {timeout:10000});
     }
     getTransactionExistChecker(x) {
-        return cy.get(`[aria-rowindex="${x}"] > .rs-table-cell-group`);
+        return cy.get(`[aria-rowindex="${x}"] > .rs-table-cell-group`, {timeout:10000});
     }
 
     getTransactionTransactionProcessedDate(x) {
@@ -158,7 +156,7 @@ class TransactionPageTest {
         return cy.get('.rs-picker-toolbar-right > .rs-btn');
     }
     getTransactionExportBtn(){
-        return cy.get('.space-x-3 > .rs-btn > div', { timeout: 100000});
+        return cy.get('.space-x-3 > .rs-btn > div', { timeout: 150000});
     }
 }
 
